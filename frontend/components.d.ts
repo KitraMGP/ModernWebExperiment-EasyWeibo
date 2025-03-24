@@ -10,13 +10,16 @@ declare module 'vue' {
   export interface GlobalComponents {
     EditArea: typeof import('./src/components/EditArea.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElForm: typeof import('element-plus/es')['ElForm']
+    ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElLink: typeof import('element-plus/es')['ElLink']
-    ElMenu: typeof import('element-plus/es')['ElMenu']
-    ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
-    ElPageHeader: typeof import('element-plus/es')['ElPageHeader']
+    LoginComponent: typeof import('./src/components/account/LoginComponent.vue')['default']
+    PostItem: typeof import('./src/components/postItem/PostItem.vue')['default']
+    PostItemHeader: typeof import('./src/components/postItem/PostItemHeader.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SimpleAvatar: typeof import('./src/components/SimpleAvatar.vue')['default']
     TopBar: typeof import('./src/components/TopBar.vue')['default']
   }
 }
