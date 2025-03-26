@@ -1,0 +1,43 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.4'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'kitra'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	maven {
+		url 'https://maven.aliyun.com/repository/public/'
+    }
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	// spring starter web
+	implementation 'org.springframework.boot:spring-boot-starter-web:3.4.4'
+	// spring starter security
+//	implementation "org.springframework.boot:spring-boot-starter-security"
+	// Sa-Token 权限认证，在线文档：https://sa-token.cc
+	implementation 'cn.dev33:sa-token-spring-boot3-starter:1.41.0'
+	// mybatis
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+	// mysql-connector-j
+	implementation 'com.mysql:mysql-connector-j:9.2.0'
+	// jbcrypt
+	implementation 'org.mindrot:jbcrypt:0.4'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
