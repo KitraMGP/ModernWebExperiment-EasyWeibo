@@ -8,7 +8,6 @@ import kitra.easyweibo.dto.posts.PostsResponse;
 import kitra.easyweibo.entity.PostEntity;
 import kitra.easyweibo.service.PostService;
 import kitra.easyweibo.util.ApiUtil;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +16,7 @@ import java.util.List;
 
 @RestController
 public class PostController {
-    private PostService postService;
+    private final PostService postService;
     private static final int GET_POSTS_LIMIT = 5;
 
     public PostController(PostService postService) {

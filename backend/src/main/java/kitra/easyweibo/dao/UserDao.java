@@ -2,7 +2,6 @@ package kitra.easyweibo.dao;
 
 import kitra.easyweibo.entity.UserEntity;
 import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
 public interface UserDao {
