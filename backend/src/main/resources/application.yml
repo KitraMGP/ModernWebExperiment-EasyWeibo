@@ -2,7 +2,6 @@ spring:
   application:
     name: easyweibo
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/easyweibo?useUnicode=true&characterEncoding=utf-8
     username: root
     password: 123456
@@ -12,6 +11,8 @@ server:
 
 mybatis:
   type-aliases-package: kitra.easyweibo.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 ############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
 sa-token:

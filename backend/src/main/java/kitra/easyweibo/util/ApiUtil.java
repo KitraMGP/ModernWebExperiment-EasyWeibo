@@ -10,7 +10,7 @@ public class ApiUtil {
      * @return ResponseEntity，可直接作为Controller方法中的返回值
      */
     public static <T> ResponseEntity<ApiResponse<T>> unauthorizedResponse() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), null, "用户未登录"));
+        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), null, "用户未登录"));
     }
 
     /**
@@ -20,5 +20,15 @@ public class ApiUtil {
      */
     public static <T> ResponseEntity<ApiResponse<T>> successfulResponse(T data) {
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), data, "success"));
+    }
+
+    /**
+     * 用来快速生成“失败”的返回数据
+     * @param code API返回数据中的code
+     * @param message API返回数据中的message
+     * @return ResponseEntity，可直接作为Controller方法中的返回值
+     */
+    public static <T> ResponseEntity<ApiResponse<T>> failedResponse(int code, String message) {
+        return ResponseEntity.ok(new ApiResponse<>(code, null, message));
     }
 }

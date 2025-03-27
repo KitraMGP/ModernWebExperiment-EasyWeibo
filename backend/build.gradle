@@ -15,7 +15,7 @@ java {
 
 repositories {
 	maven {
-		url 'https://maven.aliyun.com/repository/public/'
+		url = 'https://maven.aliyun.com/repository/public/'
     }
 	mavenCentral()
 }
