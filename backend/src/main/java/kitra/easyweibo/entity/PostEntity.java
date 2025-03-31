@@ -5,10 +5,11 @@ import org.apache.ibatis.type.Alias;
 @Alias("post")
 public class PostEntity {
     private int id;
-    private long time;
     private UserEntity user;
+    private long time;
     private String content;
     private int likes;
+    private int comments;
 
     public String getContent() {
         return content;
@@ -48,5 +49,13 @@ public class PostEntity {
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    public int getComments() {
+        return comments;
+    }
+
+    public void setComments(int comments) {
+        this.comments = comments;
     }
 }

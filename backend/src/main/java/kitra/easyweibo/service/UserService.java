@@ -2,6 +2,8 @@ package kitra.easyweibo.service;
 
 import kitra.easyweibo.dao.UserDao;
 import kitra.easyweibo.entity.UserEntity;
+import kitra.easyweibo.exception.*;
+import kitra.easyweibo.util.UserInfoUtil;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -17,53 +19,119 @@ public class UserService {
     }
 
     /**
-     *  验证给定的用户名和密码是否正确
+     * 验证给定的用户名和密码是否正确
      *
-     * @return 若登录成功，返回UserEntity，否则返回null
+     * @return 返回UserEntity
      */
     public UserEntity login(String username, String password) {
-        UserEntity userEntity = userDao.getUser(username);
+        UserEntity userEntity = userDao.getUserByName(username);
         // 用户不存在
-        if(userEntity == null) {
-            return null;
+        if (userEntity == null) {
+            throw new UserNotFoundException();
         }
-        if(BCrypt.checkpw(password, userEntity.getPassword())) {
-            return userEntity;
-        } else {
-            return null;
+        if (!BCrypt.checkpw(password, userEntity.getPassword())) {
+            throw new LoginFailedException();
         }
+        return userEntity;
     }
 
     /**
      * 用户注册
-     * @return 指示注册是否成功
      */
-    public boolean register(String username, String nickname, String password) {
-        UserEntity userEntity = userDao.getUser(username);
+    public void register(String username, String nickname, String password) {
+        UserEntity userEntity = userDao.getUserByName(username);
         // 用户已存在
-        if(userEntity != null) {
-            return false;
+        if (userEntity != null) {
+            throw new UserAlreadyExistsException();
         }
         // 对输入进行检验
-        // 昵称不能为空
-        if(nickname.isBlank()) {
-            return false;
+        if (!UserInfoUtil.validateNickname(nickname)) {
+            throw new BadInputException("昵称");
         }
-        // 对用户名进行正则表达式判断（只能由字母或数字组成，长度1-32位）
-        if(!username.matches("\\w{1,32}")) {
-            return false;
+        if (!UserInfoUtil.validateUsername(username)) {
+            throw new BadInputException("用户名");
         }
-        // 对密码进行正则表达式判断（只能由字母或数字组成，长度8-32位）
-        if(!password.matches("\\w{8,32}")) {
-            return false;
+        if (!UserInfoUtil.validatePassword(password)) {
+            throw new BadInputException("密码");
         }
         // 加密密码并插入数据库
         String encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         UserEntity user = new UserEntity();
-        user.setName(username);
+        user.setUsername(username);
         user.setNickname(nickname);
         user.setPassword(encryptedPassword);
         int result = userDao.insertUser(user);
-        return result == 1;
+        if (result != 1) throw new DatabaseOpreationException();
+    }
+
+    /**
+     * 更新用户信息（不包含密码和头像）
+     */
+    public void updateUserInfo(int userId, String newUserName, String nickname, String description) {
+        // 检测用户是否存在
+        UserEntity userEntity = userDao.getUserById(userId);
+        if (userEntity == null) {
+            throw new UserNotFoundException();
+        }
+        // 检测输入是否合法
+        if (!UserInfoUtil.validateUsername(newUserName) || !UserInfoUtil.validateNickname(nickname) || !UserInfoUtil.validateDescription(description)) {
+            throw new BadInputException("");
+        }
+        String oldUserName = userEntity.getUsername();
+        // 如果更改了用户名
+        if (!oldUserName.equals(newUserName)) {
+            // 检测新用户名是否和别人重复
+            if (userDao.getUserByName(newUserName) != null) {
+                throw new UserAlreadyExistsException();
+            }
+            userEntity.setUsername(newUserName);
+        }
+        // 继续更新昵称和描述
+        userEntity.setNickname(nickname);
+        userEntity.setDescription(description);
+        int result = userDao.updateUser(userEntity);
+        if (result != 1) throw new DatabaseOpreationException();
+    }
+
+    /**
+     * 更改用户密码
+     */
+    public void changePassword(int userId, String oldPassword, String newPassword) {
+        UserEntity userEntity = userDao.getUserById(userId);
+        if (userEntity == null) {
+            throw new UserNotFoundException();
+        }
+        if (!BCrypt.checkpw(oldPassword, userEntity.getPassword())) {
+            throw new BadPasswordException();
+        }
+        if (!UserInfoUtil.validatePassword(newPassword)) {
+            throw new BadInputException("密码");
+        }
+        String encryptedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+        userEntity.setPassword(encryptedPassword);
+        int result = userDao.updateUser(userEntity);
+        if (result != 1) throw new DatabaseOpreationException();
+    }
+
+    /**
+     * 获取用户公开信息
+     */
+    public UserEntity getUserInfo(String username) {
+        UserEntity userEntity = userDao.getUserByName(username);
+        if (userEntity == null) {
+            throw new UserNotFoundException();
+        }
+        return userEntity;
+    }
+
+    /**
+     * 根据数字id获取用户公开信息
+     */
+    public UserEntity getUserInfo(int userId) {
+        UserEntity userEntity = userDao.getUserById(userId);
+        if (userEntity == null) {
+            throw new UserNotFoundException();
+        }
+        return userEntity;
     }
 }

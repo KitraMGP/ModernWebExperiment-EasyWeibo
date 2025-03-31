@@ -4,17 +4,28 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("user")
 public class UserEntity {
-    private String name;
+    private int id;
+    private String username;
     private String nickname;
+    private String description;
+    private boolean hasAvatar;
     // 实际上是加密后的密码字符串
     private String password;
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getNickname() {
@@ -23,6 +34,22 @@ public class UserEntity {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean hasAvatar() {
+        return hasAvatar;
+    }
+
+    public void setHasAvatar(boolean hasAvatar) {
+        this.hasAvatar = hasAvatar;
     }
 
     public String getPassword() {
