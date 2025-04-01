@@ -5,6 +5,7 @@ import org.apache.ibatis.type.Alias;
 @Alias("comment")
 public class CommentEntity {
     private int id;
+    private PostEntity post;
     private UserEntity user;
     private long time;
     private String content;
@@ -17,6 +18,14 @@ public class CommentEntity {
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    public PostEntity getPost() {
+        return post;
+    }
+
+    public void setPost(PostEntity post) {
+        this.post = post;
     }
 
     public long getTime() {

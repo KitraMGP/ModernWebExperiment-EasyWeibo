@@ -61,7 +61,7 @@ public class UserService {
         user.setNickname(nickname);
         user.setPassword(encryptedPassword);
         int result = userDao.insertUser(user);
-        if (result != 1) throw new DatabaseOpreationException();
+        if (result != 1) throw new DatabaseOperationException();
     }
 
     /**
@@ -90,7 +90,7 @@ public class UserService {
         userEntity.setNickname(nickname);
         userEntity.setDescription(description);
         int result = userDao.updateUser(userEntity);
-        if (result != 1) throw new DatabaseOpreationException();
+        if (result != 1) throw new DatabaseOperationException();
     }
 
     /**
@@ -110,7 +110,7 @@ public class UserService {
         String encryptedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
         userEntity.setPassword(encryptedPassword);
         int result = userDao.updateUser(userEntity);
-        if (result != 1) throw new DatabaseOpreationException();
+        if (result != 1) throw new DatabaseOperationException();
     }
 
     /**
