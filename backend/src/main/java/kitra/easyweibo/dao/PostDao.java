@@ -25,6 +25,9 @@ public interface PostDao {
     @Update("UPDATE post SET likes=#{likesCount} WHERE id=#{postId}")
     int updateLikesCount(int postId, int likesCount);
 
+    @Update("UPDATE post SET comments=#{commentCount} WHERE id=#{postId}")
+    int updateCommentCount(int postId, int commentCount);
+
     @Select("SELECT * FROM post ORDER BY id DESC LIMIT #{limit}")
     @Results({
         @Result(property = "user", column = "user", one = @One(select = "kitra.easyweibo.dao.UserDao.getUserById"))

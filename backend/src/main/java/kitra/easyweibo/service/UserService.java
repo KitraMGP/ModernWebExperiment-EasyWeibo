@@ -6,11 +6,13 @@ import kitra.easyweibo.exception.*;
 import kitra.easyweibo.util.UserInfoUtil;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 提供用户注册、登录功能
  */
 @Service
+@Transactional
 public class UserService {
     private final UserDao userDao;
 
@@ -60,8 +62,7 @@ public class UserService {
         user.setUsername(username);
         user.setNickname(nickname);
         user.setPassword(encryptedPassword);
-        int result = userDao.insertUser(user);
-        if (result != 1) throw new DatabaseOperationException();
+        checkResult(userDao.insertUser(user));
     }
 
     /**
@@ -89,8 +90,7 @@ public class UserService {
         // 继续更新昵称和描述
         userEntity.setNickname(nickname);
         userEntity.setDescription(description);
-        int result = userDao.updateUser(userEntity);
-        if (result != 1) throw new DatabaseOperationException();
+        checkResult(userDao.updateUser(userEntity));
     }
 
     /**
@@ -109,8 +109,7 @@ public class UserService {
         }
         String encryptedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
         userEntity.setPassword(encryptedPassword);
-        int result = userDao.updateUser(userEntity);
-        if (result != 1) throw new DatabaseOperationException();
+        checkResult(userDao.updateUser(userEntity));
     }
 
     /**
@@ -133,5 +132,14 @@ public class UserService {
             throw new UserNotFoundException();
         }
         return userEntity;
+    }
+
+    /**
+     * 检查数据操作方法返回值是否为1，若不是1则抛出{@link DatabaseOperationException}
+     */
+    private void checkResult(int result) {
+        if (result != 1) {
+            throw new DatabaseOperationException();
+        }
     }
 }
