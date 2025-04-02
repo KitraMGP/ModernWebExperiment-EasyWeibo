@@ -8,6 +8,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static kitra.easyweibo.util.DataBaseUtil.checkResult;
+
 /**
  * 提供用户注册、登录功能
  */
@@ -132,14 +134,5 @@ public class UserService {
             throw new UserNotFoundException();
         }
         return userEntity;
-    }
-
-    /**
-     * 检查数据操作方法返回值是否为1，若不是1则抛出{@link DatabaseOperationException}
-     */
-    private void checkResult(int result) {
-        if (result != 1) {
-            throw new DatabaseOperationException();
-        }
     }
 }

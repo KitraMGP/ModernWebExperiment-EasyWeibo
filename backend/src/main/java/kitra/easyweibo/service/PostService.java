@@ -1,10 +1,8 @@
 package kitra.easyweibo.service;
 
-import kitra.easyweibo.dao.CommentDao;
-import kitra.easyweibo.dao.LikeDao;
-import kitra.easyweibo.dao.PostDao;
-import kitra.easyweibo.dao.UserDao;
+import kitra.easyweibo.dao.*;
 import kitra.easyweibo.dto.post.CommentListItem;
+import kitra.easyweibo.dto.post.PostItem;
 import kitra.easyweibo.entity.CommentEntity;
 import kitra.easyweibo.entity.PostEntity;
 import kitra.easyweibo.entity.UserEntity;
@@ -12,23 +10,31 @@ import kitra.easyweibo.exception.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static kitra.easyweibo.util.DataBaseUtil.checkResult;
 
 @Service
 @Transactional
 public class PostService {
     private static final int POST_MAX_LENGTH = 140;
     private static final int COMMENT_MAX_LENGTH = 140;
+    public static final int POST_IMAGES_MAX_COUNT = 9;
     private final UserDao userDao;
     private final PostDao postDao;
     private final LikeDao likeDao;
     private final CommentDao commentDao;
+    private final ImageService imageService;
+    private final PostImageDao postImageDao;
 
-    public PostService(UserDao userDao, PostDao postDao, LikeDao likeDao, CommentDao commentDao) {
+    public PostService(UserDao userDao, PostDao postDao, LikeDao likeDao, CommentDao commentDao, ImageService imageService, PostImageDao postImageDao) {
         this.userDao = userDao;
         this.postDao = postDao;
         this.likeDao = likeDao;
         this.commentDao = commentDao;
+        this.imageService = imageService;
+        this.postImageDao = postImageDao;
     }
 
     /**
@@ -36,8 +42,8 @@ public class PostService {
      *
      * @param limit 获取帖子个数限制
      */
-    public List<PostEntity> getLatestPosts(int limit) {
-        return postDao.getLatestPosts(limit);
+    public List<PostItem> getLatestPosts(int limit) {
+        return postEntitiesToItems(postDao.getLatestPosts(limit));
     }
 
     /**
@@ -46,8 +52,23 @@ public class PostService {
      * @param lastId 上一次获取的帖子中最小（发布时间最早）的id
      * @param limit  获取帖子个数限制
      */
-    public List<PostEntity> getMorePosts(int lastId, int limit) {
-        return postDao.getMorePosts(lastId, limit);
+    public List<PostItem> getMorePosts(int lastId, int limit) {
+        return postEntitiesToItems(postDao.getMorePosts(lastId, limit));
+    }
+
+    /**
+     * 将PostEntity列表转换为PostItem列表，查询所有帖子附带的图片，并插入PostItem中
+     */
+    private List<PostItem> postEntitiesToItems(List<PostEntity> postEntityList) {
+        List<PostItem> postItems = new ArrayList<>(postEntityList.size());
+        for(PostEntity p : postEntityList) {
+            List<String> imageFileNames = new ArrayList<>(postEntityList.size());
+            // 遍历图片列表，将每个图片的文件名存入列表
+            postImageDao.getPostImages(p.getId()).forEach(image -> imageFileNames.add(image.getImage().getFileName()));
+            // 构建PostItem列表
+            postItems.add(new PostItem(p.getId(), p.getUser().getUsername(), p.getUser().getNickname(), p.getUser().hasAvatar(), p.getTime(), p.getContent(), imageFileNames.toArray(new String[0]), p.getLikes(), p.getComments()));
+        }
+        return postItems;
     }
 
     /**
@@ -65,13 +86,16 @@ public class PostService {
         if (content.length() > POST_MAX_LENGTH) {
             throw new ContentTooLongException();
         }
+        if (images.length > POST_IMAGES_MAX_COUNT) {
+            throw new PostImageCountExceedsLimitException();
+        }
         long time = System.currentTimeMillis() / 1000;
         PostEntity postEntity = new PostEntity();
         postEntity.setUser(userEntity);
         postEntity.setContent(content);
         postEntity.setTime(time);
         checkResult(postDao.insertPost(postEntity));
-        // TODO 添加图片
+        imageService.setPostImage(postEntity.getId(), images);
         // Mybatis插入postEntity数据后，会填充id属性
         return postEntity.getId();
     }
@@ -95,11 +119,14 @@ public class PostService {
         if (content.length() > POST_MAX_LENGTH) {
             throw new ContentTooLongException();
         }
+        if (images.length > POST_IMAGES_MAX_COUNT) {
+            throw new PostImageCountExceedsLimitException();
+        }
         long time = System.currentTimeMillis() / 1000;
         postEntity.setContent(content);
         postEntity.setTime(time);
         checkResult(postDao.updatePost(postEntity));
-        // TODO 添加图片
+        imageService.setPostImage(postId, images);
     }
 
     /**
@@ -118,6 +145,8 @@ public class PostService {
         if (postEntity.getUser() == null || userId != postEntity.getUser().getId()) {
             throw new PermissionDeniedException();
         }
+        // 删除帖子的所有图片
+        imageService.setPostImage(postId, new String[0]);
         checkResult(postDao.deletePost(postId));
     }
 
@@ -205,17 +234,6 @@ public class PostService {
             commentListItems[i] = new CommentListItem(comment.getId(), user.getUsername(), user.getNickname(), user.hasAvatar(), comment.getTime(), comment.getContent());
         }
         return commentListItems;
-    }
-
-    /**
-     * 判断数据库操作返回值是否为1。若不是1，则抛出{@link DatabaseOperationException}
-     *
-     * @param result 数据操作方法的返回值
-     */
-    private void checkResult(int result) {
-        if (result != 1) {
-            throw new DatabaseOperationException();
-        }
     }
 
     /**

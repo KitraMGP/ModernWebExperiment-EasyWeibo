@@ -22,7 +22,7 @@ public class DeleteCommentController {
         if(!StpUtil.isLogin()) {
             return ApiUtil.unauthorizedResponse();
         }
-        postService.deletePost(StpUtil.getLoginIdAsInt(), request.id());
+        postService.deleteComment(StpUtil.getLoginIdAsInt(), request.id());
         return ApiUtil.successfulResponse(null);
     }
 }
