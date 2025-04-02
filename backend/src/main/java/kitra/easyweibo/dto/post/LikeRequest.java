@@ -1,4 +1,6 @@
 package kitra.easyweibo.dto.post;
 
-public record LikeRequest(int postId, boolean like) {
+import jakarta.validation.constraints.NotNull;
+
+public record LikeRequest(@NotNull Integer postId, @NotNull Boolean like) {
 }

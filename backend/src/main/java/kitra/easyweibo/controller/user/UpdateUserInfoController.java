@@ -1,6 +1,7 @@
 package kitra.easyweibo.controller.user;
 
 import cn.dev33.satoken.stp.StpUtil;
+import jakarta.validation.Valid;
 import kitra.easyweibo.annotation.UserRestController;
 import kitra.easyweibo.dto.ApiResponse;
 import kitra.easyweibo.dto.user.UpdateUserInfoRequest;
@@ -18,7 +19,7 @@ public class UpdateUserInfoController {
     }
 
     @PostMapping("/updateUserInfo")
-    public ApiResponse<Object> updateUserInfo(@RequestBody UpdateUserInfoRequest request) {
+    public ApiResponse<Object> updateUserInfo(@RequestBody @Valid UpdateUserInfoRequest request) {
         if (!StpUtil.isLogin()) {
             return ApiUtil.unauthorizedResponse();
         }

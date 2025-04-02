@@ -1,5 +1,6 @@
 package kitra.easyweibo.controller.user;
 
+import jakarta.validation.Valid;
 import kitra.easyweibo.annotation.UserRestController;
 import kitra.easyweibo.dto.ApiResponse;
 import kitra.easyweibo.dto.user.RegisterRequest;
@@ -17,7 +18,7 @@ public class RegisterController {
     }
 
     @PostMapping("/register")
-    public ApiResponse<Object> register(@RequestBody RegisterRequest registerRequest) {
+    public ApiResponse<Object> register(@RequestBody @Valid RegisterRequest registerRequest) {
         userService.register(registerRequest.username(), registerRequest.nickname(), registerRequest.password());
         return ApiUtil.successfulResponse(null);
     }

@@ -17,5 +17,5 @@ public interface PostImageDao {
     List<PostImageEntity> getPostImages(int postId);
 
     @Delete("DELETE FROM post_image WHERE post=#{postId}")
-    int deletePostImages(int postId);
+    void deletePostImages(int postId);
 }

@@ -1,6 +1,7 @@
 package kitra.easyweibo.controller.post;
 
 import cn.dev33.satoken.stp.StpUtil;
+import jakarta.validation.Valid;
 import kitra.easyweibo.annotation.PostRestController;
 import kitra.easyweibo.dto.ApiResponse;
 import kitra.easyweibo.dto.post.NewPostRequest;
@@ -19,7 +20,7 @@ public class NewPostController {
     }
 
     @PostMapping("/new")
-    public ApiResponse<NewPostResponse> newPost(@RequestBody NewPostRequest request) {
+    public ApiResponse<NewPostResponse> newPost(@RequestBody @Valid NewPostRequest request) {
         if(!StpUtil.isLogin()) {
             return ApiUtil.unauthorizedResponse();
         }

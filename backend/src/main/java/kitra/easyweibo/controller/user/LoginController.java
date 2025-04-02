@@ -1,6 +1,7 @@
 package kitra.easyweibo.controller.user;
 
 import cn.dev33.satoken.stp.StpUtil;
+import jakarta.validation.Valid;
 import kitra.easyweibo.annotation.UserRestController;
 import kitra.easyweibo.dto.ApiResponse;
 import kitra.easyweibo.dto.user.LoginRequest;
@@ -19,7 +20,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ApiResponse<Object> login(@RequestBody LoginRequest loginRequest) {
+    public ApiResponse<Object> login(@RequestBody @Valid LoginRequest loginRequest) {
         UserEntity userEntity = userService.login(loginRequest.username(), loginRequest.password());
         StpUtil.login(userEntity.getId());
         return ApiUtil.successfulResponse(null);

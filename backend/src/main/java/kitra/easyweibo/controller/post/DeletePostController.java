@@ -1,6 +1,7 @@
 package kitra.easyweibo.controller.post;
 
 import cn.dev33.satoken.stp.StpUtil;
+import jakarta.validation.Valid;
 import kitra.easyweibo.annotation.PostRestController;
 import kitra.easyweibo.dto.ApiResponse;
 import kitra.easyweibo.dto.post.DeletePostRequest;
@@ -18,7 +19,7 @@ public class DeletePostController {
     }
 
     @PostMapping("/delete")
-    public ApiResponse<Object> deletePost(@RequestBody DeletePostRequest request) {
+    public ApiResponse<Object> deletePost(@RequestBody @Valid DeletePostRequest request) {
         if(!StpUtil.isLogin()) {
             return ApiUtil.unauthorizedResponse();
         }

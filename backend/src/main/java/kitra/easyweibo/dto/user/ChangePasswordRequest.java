@@ -1,4 +1,6 @@
 package kitra.easyweibo.dto.user;
 
-public record ChangePasswordRequest(String oldPassword, String newPassword) {
+import jakarta.validation.constraints.NotNull;
+
+public record ChangePasswordRequest(@NotNull String oldPassword, @NotNull String newPassword) {
 }

@@ -7,6 +7,7 @@ import kitra.easyweibo.util.ApiUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -37,28 +38,51 @@ public class GlobalExceptionHandler {
         return ApiUtil.failedResponse(e.getCode(), e.getMessage());
     }
 
+    /**
+     * 请求URL参数类型错误异常
+     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ApiResponse<Void> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+    public ApiResponse<Void> handleMethodArgumentTypeMismatchException() {
         return ApiUtil.failedResponse(4100, "请求格式有误");
     }
 
+    /**
+     * 请求URL参数语法错误异常
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ApiResponse<Void> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    public ApiResponse<Void> handleHttpMessageNotReadableException() {
         return ApiUtil.failedResponse(4100, "请求格式有误");
     }
 
+    /**
+     * 请求URL参数缺失异常
+     */
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ApiResponse<Void> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+    public ApiResponse<Void> handleMissingServletRequestParameterException() {
         return ApiUtil.failedResponse(4100, "请求格式有误");
     }
 
+    /**
+     * POST请求form-data中上传文件为空的异常
+     */
     @ExceptionHandler(MissingServletRequestPartException.class)
-    public ApiResponse<Void> handleMissingServletRequestPartException(MissingServletRequestPartException e) {
+    public ApiResponse<Void> handleMissingServletRequestPartException() {
         return ApiUtil.failedResponse(4100, "请求格式有误");
     }
 
+    /**
+     * 请求体数据校验异常（标记@Notnull的属性为null时）
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ApiResponse<Void> handleMethodArgumentNotValidException() {
+        return ApiUtil.failedResponse(4100, "请求格式有误");
+    }
+
+    /**
+     * 上传文件大小超出application.yml设置值引发的异常
+     */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ApiResponse<Void> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+    public ApiResponse<Void> handleMaxUploadSizeExceededException() {
         return ApiUtil.failedResponse(4201, "文件长度超出限制");
     }
 

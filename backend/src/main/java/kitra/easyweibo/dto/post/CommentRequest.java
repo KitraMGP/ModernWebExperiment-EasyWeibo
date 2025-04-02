@@ -1,4 +1,6 @@
 package kitra.easyweibo.dto.post;
 
-public record CommentRequest(int postId, String content) {
+import jakarta.validation.constraints.NotNull;
+
+public record CommentRequest(@NotNull Integer postId, @NotNull String content) {
 }

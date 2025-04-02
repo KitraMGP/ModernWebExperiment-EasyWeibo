@@ -1,4 +1,6 @@
 package kitra.easyweibo.dto.user;
 
-public record LoginRequest(String username, String password) {
+import jakarta.validation.constraints.NotNull;
+
+public record LoginRequest(@NotNull String username, @NotNull String password) {
 }

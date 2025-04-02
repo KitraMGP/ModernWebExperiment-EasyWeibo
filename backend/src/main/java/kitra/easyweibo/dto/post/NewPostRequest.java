@@ -1,4 +1,6 @@
 package kitra.easyweibo.dto.post;
 
-public record NewPostRequest(String content, String[] images) {
+import jakarta.validation.constraints.NotNull;
+
+public record NewPostRequest(@NotNull String content, @NotNull String[] images) {
 }

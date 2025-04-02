@@ -1,4 +1,6 @@
 package kitra.easyweibo.dto.user;
 
-public record UpdateUserInfoRequest(String username, String nickname, String description) {
+import jakarta.validation.constraints.NotNull;
+
+public record UpdateUserInfoRequest(@NotNull String username, @NotNull String nickname, @NotNull String description) {
 }

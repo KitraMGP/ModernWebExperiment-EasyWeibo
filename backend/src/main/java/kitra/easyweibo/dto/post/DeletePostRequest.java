@@ -1,4 +1,6 @@
 package kitra.easyweibo.dto.post;
 
-public record DeletePostRequest(int postId) {
+import jakarta.validation.constraints.NotNull;
+
+public record DeletePostRequest(@NotNull Integer postId) {
 }

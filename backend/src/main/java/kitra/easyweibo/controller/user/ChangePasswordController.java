@@ -1,6 +1,7 @@
 package kitra.easyweibo.controller.user;
 
 import cn.dev33.satoken.stp.StpUtil;
+import jakarta.validation.Valid;
 import kitra.easyweibo.annotation.UserRestController;
 import kitra.easyweibo.dto.ApiResponse;
 import kitra.easyweibo.dto.user.ChangePasswordRequest;
@@ -18,7 +19,7 @@ public class ChangePasswordController {
     }
 
     @PostMapping("/changePassword")
-    public ApiResponse<Object> changePassword(@RequestBody ChangePasswordRequest request) {
+    public ApiResponse<Object> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
         if(!StpUtil.isLogin()) {
             return ApiUtil.unauthorizedResponse();
         }
