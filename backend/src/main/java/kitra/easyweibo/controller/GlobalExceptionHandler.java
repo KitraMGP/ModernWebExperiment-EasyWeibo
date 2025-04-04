@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
  * 全局异常处理器
@@ -84,6 +85,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ApiResponse<Void> handleMaxUploadSizeExceededException() {
         return ApiUtil.failedResponse(4201, "文件长度超出限制");
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ApiResponse<Void> handleNoResourceFoundException(NoResourceFoundException e) {
+        return ApiUtil.failedResponse(4404, "接口不存在：" + e.getResourcePath());
     }
 
     /**
