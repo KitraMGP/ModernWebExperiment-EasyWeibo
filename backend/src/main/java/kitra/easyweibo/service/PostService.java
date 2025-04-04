@@ -41,9 +41,10 @@ public class PostService {
      * 获取最新的帖子列表，只会加载最新的若干条帖子
      *
      * @param limit 获取帖子个数限制
+     * @param userId 用户登录的账户id，-1代表未登录
      */
-    public List<PostItem> getLatestPosts(int limit) {
-        return postEntitiesToItems(postDao.getLatestPosts(limit));
+    public List<PostItem> getLatestPosts(int limit, int userId) {
+        return postEntitiesToItems(postDao.getLatestPosts(limit), userId);
     }
 
     /**
@@ -51,22 +52,30 @@ public class PostService {
      *
      * @param lastId 上一次获取的帖子中最小（发布时间最早）的id
      * @param limit  获取帖子个数限制
+     * @param userId 用户登录的账户id，-1代表未登录
      */
-    public List<PostItem> getMorePosts(int lastId, int limit) {
-        return postEntitiesToItems(postDao.getMorePosts(lastId, limit));
+    public List<PostItem> getMorePosts(int lastId, int limit, int userId) {
+        return postEntitiesToItems(postDao.getMorePosts(lastId, limit), userId);
     }
 
     /**
      * 将PostEntity列表转换为PostItem列表，查询所有帖子附带的图片，并插入PostItem中
      */
-    private List<PostItem> postEntitiesToItems(List<PostEntity> postEntityList) {
+    private List<PostItem> postEntitiesToItems(List<PostEntity> postEntityList, int userId) {
         List<PostItem> postItems = new ArrayList<>(postEntityList.size());
         for(PostEntity p : postEntityList) {
             List<String> imageFileNames = new ArrayList<>(postEntityList.size());
             // 遍历图片列表，将每个图片的文件名存入列表
             postImageDao.getPostImages(p.getId()).forEach(image -> imageFileNames.add(image.getImage().getFileName()));
+            // 获取帖子是否被点赞
+            boolean isLike;
+            if(userId == -1) {
+                isLike = false;
+            } else {
+                isLike = likeDao.checkLike(p.getId(), userId);
+            }
             // 构建PostItem列表
-            postItems.add(new PostItem(p.getId(), p.getUser().getUsername(), p.getUser().getNickname(), p.getUser().hasAvatar(), p.getTime(), p.getContent(), imageFileNames.toArray(new String[0]), p.getLikes(), p.getComments()));
+            postItems.add(new PostItem(p.getId(), p.getUser().getUsername(), p.getUser().getNickname(), p.getUser().hasAvatar(), p.getTime(), p.getContent(), imageFileNames.toArray(new String[0]), p.getLikes(), p.getComments(), isLike));
         }
         return postItems;
     }
