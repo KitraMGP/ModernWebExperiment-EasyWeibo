@@ -31,7 +31,7 @@ public class UserService {
         UserEntity userEntity = userDao.getUserByName(username);
         // 用户不存在
         if (userEntity == null) {
-            throw new UserNotFoundException();
+            throw new LoginFailedException();
         }
         if (!BCrypt.checkpw(password, userEntity.getPassword())) {
             throw new LoginFailedException();
