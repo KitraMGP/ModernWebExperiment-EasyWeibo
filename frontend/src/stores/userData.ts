@@ -1,24 +1,17 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import type { GetUserInfoResponse } from '@/services/dto/userDto'
 
-// 全局存储userId
-export const useUserIdStore = defineStore('userId', () => {
-  const userId = ref('')
-  const value = computed(() => userId.value)
-  function set(value: string) {
-    userId.value = value
+// 全局存储userData
+export const useUserDataStore = defineStore('userData', () => {
+  const userData = ref<GetUserInfoResponse | null>(null)
+  const value = computed(() => userData.value)
+  function set(value: GetUserInfoResponse) {
+    userData.value = value
+  }
+  function clear() {
+    userData.value = null
   }
 
-  return { userId, value, set }
-})
-
-// 全局存储nickname
-export const useNicknameStore = defineStore('nickname', () => {
-  const nickname = ref('')
-  const value = computed(() => nickname.value)
-  function set(value: string) {
-    nickname.value = value
-  }
-
-  return { nickname, value, set }
+  return { userData: userData, value, set, clear }
 })

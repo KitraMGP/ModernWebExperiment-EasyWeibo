@@ -1,55 +1,47 @@
-import axios, { type AxiosResponse } from 'axios'
+import axios, { AxiosError, type AxiosResponse } from 'axios'
+import type { ApiResponse } from './dto/commonDto'
 
 // API地址，开发前端时使用mock地址
-const api = axios.create({
-  baseURL: 'http://127.0.0.1:4523/m1/6077610-5767993-default/',
+export const api = axios.create({
+  //baseURL: 'http://127.0.0.1:4523/m1/6077610-5767993-default/',
+  baseURL: '/api/',
   timeout: 10000,
+  withCredentials: true,
 })
 
-export interface ApiResponse<T> {
-  code: number
-  data: T
-  msg: string
+/**
+ * 根据ApiResponse获取错误信息
+ */
+export const getErrorMsg = (response: AxiosResponse<ApiResponse<unknown>>) => {
+  return response.data.msg
 }
 
-/* 获取帖子列表 */
-export interface PostItem {
-  id: number
-  time: number
-  userId: string
-  nickname: string
-  content: string
+/**
+ * 检查请求是否成功。若成功返回true，否则返回false
+ */
+export const checkSuccessful = (response: AxiosResponse<ApiResponse<unknown>>) => {
+  return response.data.code === 200
+}
+/**
+ * 传入AxiosError或字符串，横幅展示错误信息
+ */
+export const showFailMessage = (title: string, e: AxiosError | string) => {
+  console.error(e)
+  ElNotification({
+    type: 'error',
+    title: title,
+    message: e.toString(),
+  })
 }
 
-export interface Posts {
-  posts: PostItem[]
+/**
+ * 横幅展示成功信息
+ */
+export const showSuccessfulMessage = (title: string) => {
+  ElNotification({
+    type: 'success',
+    title: title,
+    message: '',
+    duration: 2000,
+  })
 }
-
-export const getPosts = () => api.get<ApiResponse<Posts>>('/posts')
-
-/* 登录 */
-export interface LoginRequest {
-  userId: string
-  password: string
-}
-
-export interface LoginResponseData {
-  userId: string
-  nickname: string
-}
-
-export const login = (r: LoginRequest) =>
-  api.post<LoginRequest, AxiosResponse<ApiResponse<LoginResponseData>>>('/login', r)
-
-/* 发布帖子 */
-export interface SubmitPostRequest {
-  userId: string
-  content: string
-}
-
-export interface SubmitPostResponseData {
-  postId: number
-}
-
-export const submitPost = (r: SubmitPostRequest) =>
-  api.post<SubmitPostRequest, AxiosResponse<ApiResponse<SubmitPostResponseData>>>('/newpost', r)

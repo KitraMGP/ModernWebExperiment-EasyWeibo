@@ -15,6 +15,7 @@
   "dependencies": {
     "@vueuse/core": "^13.0.0",
     "axios": "^1.8.4",
+    "dayjs": "^1.11.13",
     "element-plus": "^2.9.7",
     "pinia": "^3.0.1",
     "vue": "^3.5.13",

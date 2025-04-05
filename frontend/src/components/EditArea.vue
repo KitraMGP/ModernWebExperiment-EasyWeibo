@@ -1,41 +1,44 @@
 <script setup lang="ts">
-import { submitPost } from '@/services/api';
-import { useUserIdStore } from '@/stores/userData';
+import { checkSuccessful, getErrorMsg, showFailMessage, showSuccessfulMessage } from '@/services/api';
+import { newPost } from '@/services/postApi';
+import { isLogin } from '@/utils/isLogin';
+import { requireLogin } from '@/utils/requireLogin';
 import { ref } from 'vue';
 
 const inputText = ref('')
 // 控制发布帖子按钮是否可用
 const submitDisabled = ref(false)
 // 获取全局存储的userId
-const userIdStore = useUserIdStore()
 // 定义事件
 const emit = defineEmits(["newPostSubmitted"])
 
 // 发布帖子
 function submit() {
+  if (!isLogin()) {
+    requireLogin()
+    return
+  }
+  if (inputText.value.trim().length == 0) {
+    showFailMessage("发布失败", "请输入帖子内容")
+    return
+  }
   submitDisabled.value = true
-  submitPost({
-    userId: userIdStore.value,
-    content: inputText.value
+  newPost({
+    content: inputText.value,
+    images: []
   }).then(
-    (response) => {
-      console.log("postId: " + response.data.data.postId)
-      ElNotification({
-        type: "success",
-        title: "发布成功"
-      })
+    resp => {
+      if (!checkSuccessful(resp)) {
+        showFailMessage("发布失败", getErrorMsg(resp))
+        return
+      }
       // 触发自定义事件，在父组件刷新帖子列表
       emit("newPostSubmitted")
-    },
-    (reason) => {
-      console.log(reason)
-      ElNotification({
-        type: "error",
-        title: "发布失败",
-        message: reason
-      })
+      inputText.value = ""
+      showSuccessfulMessage("发布成功")
     }
-  ).finally(() => submitDisabled.value = false)
+  ).catch(e => showFailMessage("发布失败", e))
+    .finally(() => submitDisabled.value = false)
 }
 </script>
 

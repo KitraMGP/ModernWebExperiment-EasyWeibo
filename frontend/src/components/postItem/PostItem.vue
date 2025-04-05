@@ -1,16 +1,19 @@
 <script setup lang="ts">
+import type { PostDataItem } from '@/services/dto/postDto';
 import PostItemHeader from './PostItemHeader.vue';
+import dayjs from 'dayjs';
+import PostItemFooter from './PostItemFooter.vue';
 const props = defineProps<{
-  nickname: string,
-  userid: string,
-  content: string
+  postDataItem: PostDataItem
 }>()
 </script>
 
 <template>
   <div class="post-item">
-    <PostItemHeader :nickname="props.nickname" :userid="props.userid" />
-    <div class="content">{{ props.content }}</div>
+    <PostItemHeader :post-item="props.postDataItem" />
+    <div class="content">{{ props.postDataItem.content }}</div>
+    <div class="time">发布时间：{{ dayjs.unix(props.postDataItem.time).format("lll") }}</div>
+    <PostItemFooter :post-item="postDataItem" />
   </div>
 </template>
 
@@ -22,10 +25,15 @@ const props = defineProps<{
   border: 1px solid var(--el-border-color-darker);
   border-radius: var(--el-border-radius-base);
   box-shadow: var(--el-box-shadow);
-  padding: 1rem 1rem 1rem 1rem;
+  padding: 1rem 1rem 0.5rem 1rem;
 }
 
 .content {
   margin-top: 0.5rem;
+}
+
+.time {
+  margin-top: 0.5rem;
+  color: var(--el-color-info);
 }
 </style>

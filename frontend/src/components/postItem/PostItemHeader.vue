@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import type { PostDataItem } from '@/services/dto/postDto';
 import SimpleAvatar from '../SimpleAvatar.vue';
 const props = defineProps<{
-  nickname: string,
-  userid: string
+  postItem: PostDataItem
 }>()
 </script>
 
@@ -10,8 +10,8 @@ const props = defineProps<{
   <div class="header">
     <SimpleAvatar />
     <div class="user-info">
-      <span class="nickname">{{ props.nickname }}</span>
-      <span class="userid">{{ "@" + props.userid }}</span>
+      <span class="nickname">{{ props.postItem.nickname }}</span>
+      <span class="userid">{{ "@" + props.postItem.username }}</span>
     </div>
   </div>
 </template>

@@ -1,30 +1,45 @@
 <script setup lang="ts">
-import { isDark, toggleDark } from '@/main';
+import { toggleDark } from '@/main';
 import router from '@/router';
-import { useNicknameStore, useUserIdStore } from '@/stores/userData';
+import { checkSuccessful, getErrorMsg, showFailMessage } from '@/services/api';
+import { logout } from '@/services/userApi';
+import { useUserDataStore } from '@/stores/userData';
 import { ref, watch } from 'vue';
 
 // 获取全局存储的userId和nickname
-const userIdStore = useUserIdStore()
-const nicknameStore = useNicknameStore()
-const userId = ref(userIdStore.value)
-const nickname = ref(nicknameStore.value)
+const userDataStore = useUserDataStore()
+const userData = ref(userDataStore.value)
 // 监听全局存储数据的变化并更新变量
-watch(() => [userIdStore.value, nicknameStore.value], ([newUserId, newNickname]) => {
-  userId.value = newUserId
-  nickname.value = newNickname
+watch(() => [userDataStore.value], ([newUserData]) => {
+  userData.value = newUserData
+  isUserLoggedIn.value = newUserData != null
 })
 // 判断是否已登录
-const isUserLoggedIn = ref(userIdStore.value !== "")
+const isUserLoggedIn = ref(userData.value != null)
+
+function doLogout() {
+  logout().then(resp => {
+    if (!checkSuccessful(resp)) {
+      showFailMessage("退出登录失败", getErrorMsg(resp))
+      return
+    }
+    userDataStore.clear()
+    router.go(0)
+  }
+  ).catch(e => showFailMessage("退出登录失败", e))
+}
 </script>
 
 <template>
   <div class="topbar">
-    <el-link v-if="!isUserLoggedIn" :underline="false" class="topbar-item">注册</el-link>
+    <h1 class="topbar-title" @click="router.push('/')">EasyWeibo</h1>
+    <el-link v-if="!isUserLoggedIn" :underline="false" class="topbar-item"
+      @click="router.push('/register')">注册</el-link>
     <el-link v-if="!isUserLoggedIn" :underline="false" class="topbar-item" @click="router.push('/login')">登录</el-link>
-    <span v-if="isUserLoggedIn">用户名：{{ userId }}，昵称：{{ nickname }}</span>
-    <!-- <SimpleAvatar v-if="isUserLoggedIn" /> -->
-    <el-link :underline="false" class="topbar-item" @click="toggleDark()">{{ isDark ? "暗色模式" : "亮色模式" }}</el-link>
+    <span class="flex-center" v-if="isUserLoggedIn">用户名：{{ userData?.username }}，昵称：{{ userData?.nickname }}</span>
+    <el-link :underline="false" class="topbar-item" @click="toggleDark()">主题切换</el-link>
+    <el-link v-if="isUserLoggedIn" :underline="false" class="topbar-item">个人中心</el-link>
+    <el-link v-if="isUserLoggedIn" :underline="false" class="topbar-item" @click="doLogout()">退出登录</el-link>
   </div>
 </template>
 
@@ -37,7 +52,19 @@ const isUserLoggedIn = ref(userIdStore.value !== "")
   border-bottom: 1px solid;
 }
 
+.topbar-title {
+  display: flex;
+  margin-right: auto;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
 .topbar-item {
   margin-left: 1rem;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
 }
 </style>
