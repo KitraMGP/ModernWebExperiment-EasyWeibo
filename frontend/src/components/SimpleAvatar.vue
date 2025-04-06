@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import defaultAvatarImage from "@/assets/default_avatar.jpg"
+const props = defineProps<{
+  avatarUrl: string
+}>()
 </script>
 
 <template>
   <div class="avatar">
-    <img :src="defaultAvatarImage" width="100%" height="100%">
+    <img :src="props.avatarUrl" width="100%" height="100%">
   </div>
 </template>
 

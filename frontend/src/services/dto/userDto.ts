@@ -21,6 +21,7 @@ export interface ChangePasswordRequest {
 }
 
 export interface GetUserInfoResponse {
+  userId: number
   username: string
   nickname: string
   description: string

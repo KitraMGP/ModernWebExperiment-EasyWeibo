@@ -75,7 +75,7 @@ public class PostService {
                 isLike = likeDao.checkLike(p.getId(), userId);
             }
             // 构建PostItem列表
-            postItems.add(new PostItem(p.getId(), p.getUser().getUsername(), p.getUser().getNickname(), p.getUser().hasAvatar(), p.getTime(), p.getContent(), imageFileNames.toArray(new String[0]), p.getLikes(), p.getComments(), isLike));
+            postItems.add(new PostItem(p.getId(), p.getUser().getId(), p.getUser().getUsername(), p.getUser().getNickname(), p.getUser().hasAvatar(), p.getTime(), p.getContent(), imageFileNames.toArray(new String[0]), p.getLikes(), p.getComments(), isLike));
         }
         return postItems;
     }
@@ -240,7 +240,7 @@ public class PostService {
         for (int i = 0; i < commentEntities.size(); i++) {
             CommentEntity comment = commentEntities.get(i);
             UserEntity user = comment.getUser();
-            commentListItems[i] = new CommentListItem(comment.getId(), user.getUsername(), user.getNickname(), user.hasAvatar(), comment.getTime(), comment.getContent());
+            commentListItems[i] = new CommentListItem(comment.getId(), user.getId(), user.getUsername(), user.getNickname(), user.hasAvatar(), comment.getTime(), comment.getContent());
         }
         return commentListItems;
     }

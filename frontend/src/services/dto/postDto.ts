@@ -1,5 +1,6 @@
 export interface PostDataItem {
   id: number
+  userId: number
   username: string
   nickname: string
   hasAvatar: boolean
@@ -17,6 +18,7 @@ export interface ListPostsResponse {
 
 export interface CommentDataItem {
   id: number
+  userId: number
   username: string
   nickname: string
   hasAvatar: boolean

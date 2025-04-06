@@ -1,0 +1,24 @@
+# 用于开发环境的 Caddyfile
+# 主要用于提供后端上传的图片静态资源，还用于后端反向代理
+# 在此目录运行 start_caddy_dev.bat 即可启动
+:9000 {
+    # 反向代理到 Spring Boot 后端
+    handle_path /api/* {
+        reverse_proxy http://127.0.0.1:8081
+    }
+    # 头像目录
+    handle_path /avatars/* {
+        root * ./backend/avatarUploads
+        file_server
+    }
+    # 帖子图片目录
+    handle_path /postImages/* {
+        root * ./backend/postImageUploads
+        file_server
+    }
+
+    # 启用 gzip 压缩
+    handle {
+        encode gzip
+    }
+}

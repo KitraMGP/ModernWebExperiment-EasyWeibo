@@ -28,10 +28,10 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8081', // 代理目标地址
+        target: 'http://127.0.0.1:9000', // 代理目标地址
         changeOrigin: true, // 允许跨域
         secure: false, // 不验证 SSL 证书
-        rewrite: (path) => path.replace(/^\/api/, ''), // 重写路径
+        // rewrite: (path) => path.replace(/^\/api/, ''), // 重写路径
       },
     },
   },

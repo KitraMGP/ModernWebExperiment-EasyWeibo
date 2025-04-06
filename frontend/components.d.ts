@@ -19,6 +19,7 @@ declare module 'vue' {
     PostItem: typeof import('./src/components/postItem/PostItem.vue')['default']
     PostItemFooter: typeof import('./src/components/postItem/PostItemFooter.vue')['default']
     PostItemHeader: typeof import('./src/components/postItem/PostItemHeader.vue')['default']
+    PostItemImages: typeof import('./src/components/postItem/PostItemImages.vue')['default']
     PostsArea: typeof import('./src/components/PostsArea.vue')['default']
     RegisterComponent: typeof import('./src/components/account/RegisterComponent.vue')['default']
     RequireLoginDialog: typeof import('./src/components/dialogs/RequireLoginDialog.vue')['default']

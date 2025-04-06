@@ -1,4 +1,4 @@
 package kitra.easyweibo.dto.post;
 
-public record CommentListItem(int id, String username, String nickname, boolean hasAvatar, long time, String content) {
+public record CommentListItem(int id, int userId, String username, String nickname, boolean hasAvatar, long time, String content) {
 }
