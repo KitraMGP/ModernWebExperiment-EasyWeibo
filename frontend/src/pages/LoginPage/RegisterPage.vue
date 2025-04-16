@@ -5,7 +5,7 @@ import TopBar from '@/components/TopBar.vue';
 </script>
 
 <template>
-  <TopBar />
+  <TopBar :show-back-link="true" />
   <RegisterComponent class="register" />
 </template>
 

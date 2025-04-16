@@ -75,7 +75,11 @@ public class PostService {
                 isLike = likeDao.checkLike(p.getId(), userId);
             }
             // 构建PostItem列表
-            postItems.add(new PostItem(p.getId(), p.getUser().getId(), p.getUser().getUsername(), p.getUser().getNickname(), p.getUser().hasAvatar(), p.getTime(), p.getContent(), imageFileNames.toArray(new String[0]), p.getLikes(), p.getComments(), isLike));
+            if (p.getUser() != null) {
+                postItems.add(new PostItem(p.getId(), p.getUser().getId(), p.getUser().getUsername(), p.getUser().getNickname(), p.getUser().hasAvatar(), p.getTime(), p.getContent(), imageFileNames.toArray(new String[0]), p.getLikes(), p.getComments(), isLike));
+            } else {
+                postItems.add(new PostItem(p.getId(), null, "用户已注销", "用户已注销", false, p.getTime(), p.getContent(), imageFileNames.toArray(new String[0]), p.getLikes(), p.getComments(), isLike));
+            }
         }
         return postItems;
     }

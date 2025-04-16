@@ -92,7 +92,8 @@ public class UserService {
         // 继续更新昵称和描述
         userEntity.setNickname(nickname);
         userEntity.setDescription(description);
-        checkResult(userDao.updateUser(userEntity));
+        // checkResult(userDao.updateUser(userEntity));
+        userDao.updateUser(userEntity);
     }
 
     /**
@@ -111,7 +112,7 @@ public class UserService {
         }
         String encryptedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
         userEntity.setPassword(encryptedPassword);
-        checkResult(userDao.updateUser(userEntity));
+        userDao.updateUser(userEntity);
     }
 
     /**

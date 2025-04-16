@@ -6,6 +6,9 @@ import { logout } from '@/services/userApi';
 import { useUserDataStore } from '@/stores/userData';
 import { ref, watch } from 'vue';
 
+const props = defineProps<{
+  showBackLink?: boolean // 决定是否显示“返回到上一页”按钮
+}>()
 // 获取全局存储的userId和nickname
 const userDataStore = useUserDataStore()
 const userData = ref(userDataStore.value)
@@ -33,12 +36,17 @@ function doLogout() {
 <template>
   <div class="topbar">
     <h1 class="topbar-title" @click="router.push('/')">EasyWeibo</h1>
+    <span class="flex-center" v-if="isUserLoggedIn">用户名：{{ userData?.username }}，昵称：{{ userData?.nickname
+      }}</span>
+    <!-- 若 showBackToMainPage 未定义，则默认为 false -->
+    <el-link v-if="props.showBackLink ? props.showBackLink : false" :underline="false" class="topbar-item"
+      @click="router.back()">返回上一页</el-link>
     <el-link v-if="!isUserLoggedIn" :underline="false" class="topbar-item"
       @click="router.push('/register')">注册</el-link>
     <el-link v-if="!isUserLoggedIn" :underline="false" class="topbar-item" @click="router.push('/login')">登录</el-link>
-    <span class="flex-center" v-if="isUserLoggedIn">用户名：{{ userData?.username }}，昵称：{{ userData?.nickname }}</span>
     <el-link :underline="false" class="topbar-item" @click="toggleDark()">主题切换</el-link>
-    <el-link v-if="isUserLoggedIn" :underline="false" class="topbar-item">个人中心</el-link>
+    <el-link v-if="isUserLoggedIn" :underline="false" class="topbar-item"
+      @click="router.push('/userInfo')">个人中心</el-link>
     <el-link v-if="isUserLoggedIn" :underline="false" class="topbar-item" @click="doLogout()">退出登录</el-link>
   </div>
 </template>

@@ -15,6 +15,6 @@ public interface UserDao {
     @Insert("INSERT INTO user (username, nickname, description, hasAvatar, password) VALUES (#{username}, #{nickname}, '', FALSE, #{password})")
     int insertUser(UserEntity user);
 
-    @Update("UPDATE user SET username=#{username}, nickname=#{nickname}, description=#{description}, hasAvatar=#{hasAvatar}, password=#{password}")
+    @Update("UPDATE user SET username=#{username}, nickname=#{nickname}, description=#{description}, hasAvatar=#{hasAvatar}, password=#{password} WHERE username=#{username}")
     int updateUser(UserEntity user);
 }

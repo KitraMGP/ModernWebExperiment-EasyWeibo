@@ -15,6 +15,7 @@ declare module 'vue' {
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElLink: typeof import('element-plus/es')['ElLink']
+    ElUpload: typeof import('element-plus/es')['ElUpload']
     LoginComponent: typeof import('./src/components/account/LoginComponent.vue')['default']
     PostItem: typeof import('./src/components/postItem/PostItem.vue')['default']
     PostItemFooter: typeof import('./src/components/postItem/PostItemFooter.vue')['default']

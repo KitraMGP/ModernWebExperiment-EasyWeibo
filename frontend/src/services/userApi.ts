@@ -24,7 +24,7 @@ export const changePassword = (r: ChangePasswordRequest) =>
   api.post<ChangePasswordRequest, AxiosResponse<ApiResponse<null>>>('/user/changePassword', r)
 
 export const uploadAvatar = (r: FormData) =>
-  api.postForm<AxiosResponse<ApiResponse<null>>>('/user/uploadAvatar', r)
+  api.postForm<ApiResponse<null>>('/user/uploadAvatar', r)
 
 export const userInfo = (user?: string) =>
   api.get<ApiResponse<GetUserInfoResponse>>('/user/info', { params: { user } })
