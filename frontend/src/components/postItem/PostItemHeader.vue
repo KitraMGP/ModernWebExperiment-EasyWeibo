@@ -1,23 +1,16 @@
 <script setup lang="ts">
 import type { PostDataItem } from '@/services/dto/postDto';
 import SimpleAvatar from '../SimpleAvatar.vue';
-import defaultAvatarImage from "@/assets/default_avatar.jpg"
+import { getAvatarUrl } from '@/utils/avatarUtil';
+
 const props = defineProps<{
   postItem: PostDataItem
 }>()
-
-function getAvatarUrl(): string {
-  if (!props.postItem.hasAvatar) {
-    return defaultAvatarImage
-  } else {
-    return "http://127.0.0.1:9000/avatars/" + props.postItem.userId + "_avatar.jpg"
-  }
-}
 </script>
 
 <template>
   <div class="header">
-    <SimpleAvatar :avatarUrl="getAvatarUrl()" />
+    <SimpleAvatar :avatarUrl="getAvatarUrl(props.postItem)" />
     <div class="user-info">
       <span class="nickname">{{ props.postItem.nickname }}</span>
       <span class="userid">{{ "@" + props.postItem.username }}</span>

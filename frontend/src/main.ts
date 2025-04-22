@@ -25,8 +25,9 @@ app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
 
-setupLogin()
 dayjs.extend(localizedFormat)
 dayjs.locale('zh-cn')
 
-app.mount('#app')
+setupLogin().finally(() => {
+  app.mount('#app')
+})

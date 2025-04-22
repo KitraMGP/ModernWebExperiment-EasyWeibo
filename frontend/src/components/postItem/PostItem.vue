@@ -3,9 +3,12 @@ import type { PostDataItem } from '@/services/dto/postDto';
 import PostItemHeader from './PostItemHeader.vue';
 import dayjs from 'dayjs';
 import PostItemFooter from './PostItemFooter.vue';
+import { ref } from 'vue';
 const props = defineProps<{
   postDataItem: PostDataItem
 }>()
+
+const showComments = ref(false)
 </script>
 
 <template>
@@ -13,7 +16,8 @@ const props = defineProps<{
     <PostItemHeader :post-item="props.postDataItem" />
     <div class="content">{{ props.postDataItem.content }}</div>
     <div class="time">发布时间：{{ dayjs.unix(props.postDataItem.time).format("lll") }}</div>
-    <PostItemFooter :post-item="postDataItem" />
+    <PostItemFooter :post-item="postDataItem" @switch-show-comments="showComments = !showComments" />
+    <PostItemComments v-if="showComments" />
   </div>
 </template>
 

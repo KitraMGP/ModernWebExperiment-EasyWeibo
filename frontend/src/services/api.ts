@@ -23,14 +23,26 @@ export const checkSuccessful = (response: AxiosResponse<ApiResponse<unknown>>) =
   return response.data.code === 200
 }
 /**
- * 传入AxiosError或字符串，横幅展示错误信息
+ * 传入标题和错误，横幅展示错误信息
  */
-export const showFailMessage = (title: string, e: AxiosError | string) => {
-  console.error(e)
+export const showFailMessage = (title: string, e: AxiosError | string | unknown) => {
+  let message = ''
+  // 对错误的类型进行判断
+  if (axios.isAxiosError(e)) {
+    message = e.message
+  } else if (typeof e === 'string') {
+    message = e
+  } else if (e instanceof Error) {
+    message = e.message
+  } else {
+    message = '未知错误'
+    console.error('未知错误：', e)
+  }
+  console.error(message)
   ElNotification({
     type: 'error',
     title: title,
-    message: e.toString(),
+    message: message,
   })
 }
 

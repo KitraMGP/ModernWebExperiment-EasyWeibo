@@ -5,9 +5,9 @@ import { userInfo } from './userApi'
 /**
  * 在页面初始化的时候调用这个函数来拉取登录信息
  */
-export const setupLogin = () => {
+export async function setupLogin() {
   const userDataStore = useUserDataStore()
-  userInfo()
+  return userInfo()
     .then((resp) => {
       if (!checkSuccessful(resp)) {
         return

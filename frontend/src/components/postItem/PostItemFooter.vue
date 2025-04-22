@@ -10,6 +10,8 @@ const props = defineProps<{
   postItem: PostDataItem
 }>()
 
+const emit = defineEmits(["switchShowComments"])
+
 // 使用响应式变量，使其可以修改并且同步更新页面
 // 因为不能直接修改props
 const isLiked = ref(props.postItem.isLiked)
@@ -39,7 +41,8 @@ function changeLike(like: boolean) {
       <i v-if="!isLiked" @click="changeLike(true)" class="iconfont icon-like"></i>
       {{ likesCount }}
     </div>
-    <div class="post-footer-item"><i class="iconfont icon-comment"></i>{{ props.postItem.comments }}</div>
+    <div class="post-footer-item"><i class="iconfont icon-comment" @click="emit('switchShowComments')"></i>{{
+      props.postItem.comments }}</div>
   </div>
 </template>
 

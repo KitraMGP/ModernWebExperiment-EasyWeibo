@@ -3,18 +3,21 @@ import SimpleAvatar from '@/components/SimpleAvatar.vue';
 import TopBar from '@/components/TopBar.vue';
 import { useUserDataStore } from '@/stores/userData';
 import defaultAvatarImage from '@/assets/default_avatar.jpg'
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref } from 'vue';
 import { changePassword, updateUserInfo, uploadAvatar } from '@/services/userApi';
 import { checkSuccessful, getErrorMsg, showFailMessage, showSuccessfulMessage } from '@/services/api';
 import type { UploadUserFile } from 'element-plus';
-import axios from 'axios';
 import router from '@/router';
+import { getLoginUserAvatarUrl } from '@/utils/avatarUtil';
+import { isLogin } from '@/utils/isLogin';
 
 const userDataStore = useUserDataStore()
 const avatarUrl = ref(defaultAvatarImage)
 const saveButtonDisabled = ref(false)
 const showChangePasswdDialog = ref(false)
 const savePasswordButtonDisabled = ref(false)
+
+// 各个输入表单定义
 
 const form = reactive({
   username: userDataStore.value?.username,
@@ -31,32 +34,41 @@ const uploadAvatarForm = reactive({
   image: null as (File | null)  // 改为使用原生File类型
 })
 
+// 供头像上传控件暂存图片，用来显示图片上传列表
 const uploadFileList = ref<UploadUserFile[]>([])
 
-watch(userDataStore, (newValue) => {
-  // 若未登录，要求用户登录
-  if (newValue.value == null) {
-    router.push("/login")
-  }
-  getAvatarUrl()
-  form.username = newValue.value?.username
-  form.nickname = newValue.value?.nickname
-  form.description = newValue.value?.description
-})
-
 // 若未登录，要求用户登录
-if (userDataStore.value == null) {
+if (!isLogin()) {
   router.push("/login")
 }
+// 获取当前用户的头像
+avatarUrl.value = getLoginUserAvatarUrl()
 
-function getAvatarUrl() {
-  if (!userDataStore.value || !userDataStore.value.hasAvatar) {
-    avatarUrl.value = defaultAvatarImage
+/**
+ * 当用户在 input 中选择图片（onChange，onRemove）时调用，
+ * 用于将相应的文件填入表单，并且执行其他处理逻辑
+ */
+function selectAvatarFile(imgFile: File | null) {
+  if (imgFile == null) {
+    uploadAvatarForm.image = null
+    avatarUrl.value = getLoginUserAvatarUrl() // 重置到更改前的头像
   } else {
-    avatarUrl.value = "http://127.0.0.1:9000/avatars/" + userDataStore.value.userId + "_avatar.jpg"
+    // 检查文件类型是否合法
+    if (!["image/jpeg", "image/gif", "image/png"].includes(imgFile.type)) {
+      showFailMessage("只能选择jpg、png、gif格式的图片", "")
+      uploadFileList.value = [] // 清除刚刚上传的图片
+      return
+    }
+    // 成功，填入表单，生成临时 URL 来让用户预览头像更改
+    uploadAvatarForm.image = imgFile
+    const url = URL.createObjectURL(imgFile)
+    avatarUrl.value = url
   }
 }
 
+/**
+ * 点击“保存个人信息”按钮逻辑
+*/
 async function saveUserData() {
   saveButtonDisabled.value = true;
   try {
@@ -73,7 +85,7 @@ async function saveUserData() {
       showSuccessfulMessage("头像上传成功");
     }
 
-    // 更新用户信息
+    // 更新其他用户信息
     const updateResp = await updateUserInfo({
       username: form.username || "",
       nickname: form.nickname || "",
@@ -89,26 +101,26 @@ async function saveUserData() {
     // 清空上传状态
     uploadFileList.value = [];
     uploadAvatarForm.image = null;
-    router.go(0)
   } catch (e) {
-    // 类型安全处理
-    if (axios.isAxiosError(e)) {
-      showFailMessage("操作失败", e)
-    } else if (typeof e === 'string') {
-      showFailMessage("操作失败", e)
-    } else {
-      showFailMessage("操作失败", e instanceof Error ? e.message : '未知错误')
-    }
+    showFailMessage("发生错误", e)
   } finally {
     saveButtonDisabled.value = false
   }
 }
 
+// 修改密码功能相关函数
+
+/**
+ * 在修改密码对话框关闭的时候，清空用户填写密码的表单
+ */
 function clearPasswordForm() {
   changePasswdForm.oldPassword = ""
   changePasswdForm.newPassword = ""
 }
 
+/**
+ * 修改密码处理逻辑
+ */
 function changePasswd() {
   savePasswordButtonDisabled.value = true
   changePassword(changePasswdForm).then(resp => {
@@ -147,8 +159,8 @@ function changePasswd() {
       </el-form-item>
       <el-form-item label="头像">
         <el-upload ref="upload" :limit="1" :auto-upload="false" v-model:file-list="uploadFileList"
-          :on-change="(uploadFile) => uploadAvatarForm.image = uploadFile?.raw ?? null"
-          :on-remove="() => uploadAvatarForm.image = null" accept="image/jpeg,image/gif,image/png">
+          :on-change="(uploadFile) => selectAvatarFile(uploadFile?.raw ?? null)"
+          :on-remove="() => selectAvatarFile(null)" accept="image/jpeg,image/gif,image/png">
           <template #trigger>
             <el-button>选择头像文件</el-button>
           </template>

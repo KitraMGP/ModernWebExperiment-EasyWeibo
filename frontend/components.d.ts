@@ -18,6 +18,8 @@ declare module 'vue' {
     ElUpload: typeof import('element-plus/es')['ElUpload']
     LoginComponent: typeof import('./src/components/account/LoginComponent.vue')['default']
     PostItem: typeof import('./src/components/postItem/PostItem.vue')['default']
+    PostItemCommentItem: typeof import('./src/components/postItem/PostItemCommentItem.vue')['default']
+    PostItemComments: typeof import('./src/components/postItem/PostItemComments.vue')['default']
     PostItemFooter: typeof import('./src/components/postItem/PostItemFooter.vue')['default']
     PostItemHeader: typeof import('./src/components/postItem/PostItemHeader.vue')['default']
     PostItemImages: typeof import('./src/components/postItem/PostItemImages.vue')['default']
