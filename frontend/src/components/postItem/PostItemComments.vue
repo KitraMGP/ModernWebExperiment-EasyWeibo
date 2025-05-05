@@ -8,8 +8,10 @@ import { isLogin } from '@/utils/isLogin';
 import { requireLogin } from '@/utils/requireLogin';
 
 const props = defineProps<{
-  postId: number
+  postId: number,
+  postAuthorId: number | null
 }>()
+const emit = defineEmits(["delete-comment", "new-comment", "update-comment-count"])
 
 // 用于控制“加载中”和“加载失败”状态
 const isLoading = ref(true)
@@ -42,6 +44,7 @@ function sendComment() {
     // 发送成功，清空输入框，重新获取评论
     commentInput.value = ""
     showSuccessfulMessage("评论发送成功")
+    emit("new-comment")
     fetchComments()
   }).catch(e => {
     showFailMessage("评论发送失败", e)
@@ -63,6 +66,7 @@ function fetchComments() {
     }
     // 评论加载成功
     comments.value = resp.data.data.comments
+    emit("update-comment-count", comments.value.length)
   }).catch(e => {
     // 处理 AxiosError
     isFailed.value = true
@@ -70,6 +74,17 @@ function fetchComments() {
   }).finally(() => {
     isLoading.value = false
   })
+}
+
+// 从前端的列表中删除评论，并且更新显示的评论数量
+function deleteCommentFromList(id: number) {
+  for (let i = 0; i < comments.value.length; i++) {
+    if (comments.value[i].id === id) {
+      comments.value.splice(i, 1)
+      emit("delete-comment")
+      break
+    }
+  }
 }
 
 fetchComments()
@@ -80,11 +95,12 @@ fetchComments()
     <span class="title">评论</span>
     <div class="center">
       <span v-if="isLoading">加载中</span>
-      <span v-if="isFailed">加载失败！<a href="javascript:void(0)" @click="fetchComments()">点击重试</a></span>
+      <span v-if="isFailed">加载失败！<el-link href="javascript:void(0)" @click="fetchComments()">点击重试</el-link></span>
       <span v-if="!isLoading && !isFailed && comments.length == 0">没有评论</span>
     </div>
     <div v-if="!isLoading && !isFailed">
-      <PostItemCommentItem v-for="item in comments" :key="item.id" :comment="item" />
+      <PostItemCommentItem v-for="item in comments" :key="item.id" :comment="item" :post-author-id="props.postAuthorId"
+        @delete-comment="deleteCommentFromList" />
     </div>
     <div class="comment-input">
       <el-input v-model="commentInput" placeholder="请输入评论内容" :maxlength="140"></el-input>

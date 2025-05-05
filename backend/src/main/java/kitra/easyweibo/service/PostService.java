@@ -40,7 +40,7 @@ public class PostService {
     /**
      * 获取最新的帖子列表，只会加载最新的若干条帖子
      *
-     * @param limit 获取帖子个数限制
+     * @param limit  获取帖子个数限制
      * @param userId 用户登录的账户id，-1代表未登录
      */
     public List<PostItem> getLatestPosts(int limit, int userId) {
@@ -63,13 +63,13 @@ public class PostService {
      */
     private List<PostItem> postEntitiesToItems(List<PostEntity> postEntityList, int userId) {
         List<PostItem> postItems = new ArrayList<>(postEntityList.size());
-        for(PostEntity p : postEntityList) {
+        for (PostEntity p : postEntityList) {
             List<String> imageFileNames = new ArrayList<>(postEntityList.size());
             // 遍历图片列表，将每个图片的文件名存入列表
             postImageDao.getPostImages(p.getId()).forEach(image -> imageFileNames.add(image.getImage().getFileName()));
             // 获取帖子是否被点赞
             boolean isLike;
-            if(userId == -1) {
+            if (userId == -1) {
                 isLike = false;
             } else {
                 isLike = likeDao.checkLike(p.getId(), userId);
@@ -225,11 +225,35 @@ public class PostService {
         if (commentEntity == null) {
             throw new CommentNotFoundException();
         }
-        // 注意：若评论的user为null，也会提示权限不足
-        if (commentEntity.getUser() == null || commentEntity.getUser().getId() != userEntity.getId()) {
-            throw new PermissionDeniedException();
+        // 可以删除自己的评论，或者自己发布的帖子的评论
+        // 发送评论的用户已注销（也说明不是自己发的评论）
+        if (commentEntity.getUser() == null) {
+            // 发送帖子的账户已注销
+            if (commentEntity.getPost().getUser() == null) {
+                throw new PermissionDeniedException();
+            }
+            // 不是自己发送的帖子
+            if (commentEntity.getPost().getUser().getId() != userEntity.getId()) {
+                throw new PermissionDeniedException();
+            }
+        } else {
+            // 发送评论的用户存在
+            // 发送帖子的账户未注销
+            if (commentEntity.getPost().getUser() != null) {
+                // 不是自己发送的评论，也不是自己发送的帖子的评论
+                if (commentEntity.getUser().getId() != userEntity.getId() && commentEntity.getPost().getUser().getId() != userEntity.getId()) {
+                    throw new PermissionDeniedException();
+                }
+            } else {
+                // 发送帖子的账户已注销
+                // 不是自己发送的评论
+                if (commentEntity.getUser().getId() != userEntity.getId()) {
+                    throw new PermissionDeniedException();
+                }
+            }
         }
         checkResult(commentDao.deleteComment(commentId));
+        updateCommentCount(commentEntity.getPost().getId());
     }
 
     /**
