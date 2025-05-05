@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CommentDataItem } from '@/services/dto/postDto';
 import { getAvatarUrlFromComment } from '@/utils/avatarUtil';
+import dayjs from 'dayjs';
 
 const props = defineProps<{
   comment: CommentDataItem
@@ -14,6 +15,7 @@ const props = defineProps<{
       <div class="user-info">
         <span class="nickname">{{ props.comment.nickname }}</span>
         <span class="userid">{{ "@" + props.comment.username }}</span>
+        <span class="date">{{ dayjs.unix(props.comment.time).format("lll") }}</span>
       </div>
     </div>
     <div class="comment-body">
@@ -49,5 +51,7 @@ const props = defineProps<{
   color: var(--el-color-info);
 }
 
-.comment-body {}
+.date {
+  color: var(--el-color-info);
+}
 </style>
