@@ -35,6 +35,8 @@ const showComments = ref(false)
 
 .content {
   margin-top: 0.5rem;
+  /* 设置 pre-wrap 之后，帖子内容中的换行符就会被正确解析为换行 */
+  white-space: pre-wrap;
 }
 
 .time {
