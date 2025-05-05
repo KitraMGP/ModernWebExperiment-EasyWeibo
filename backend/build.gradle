@@ -35,10 +35,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	// spring boot starter validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	// spring starter security
-//	implementation "org.springframework.boot:spring-boot-starter-security"
+
 	// Sa-Token 权限认证，在线文档：https://sa-token.cc
-	implementation 'cn.dev33:sa-token-spring-boot3-starter:1.41.0'
+	implementation 'cn.dev33:sa-token-spring-boot3-starter:1.42.0'
+	// Sa-Token 整合 RedisTemplate
+	implementation 'cn.dev33:sa-token-redis-template:1.42.0'
+	// 提供 Redis 连接池
+	implementation 'org.apache.commons:commons-pool2'
+
 	// mybatis
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
 	// mysql-connector-j
