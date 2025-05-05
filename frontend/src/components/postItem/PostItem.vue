@@ -4,6 +4,7 @@ import PostItemHeader from './PostItemHeader.vue';
 import dayjs from 'dayjs';
 import PostItemFooter from './PostItemFooter.vue';
 import { ref } from 'vue';
+import PostItemComments from './PostItemComments.vue';
 const props = defineProps<{
   postDataItem: PostDataItem
 }>()
@@ -17,7 +18,7 @@ const showComments = ref(false)
     <div class="content">{{ props.postDataItem.content }}</div>
     <div class="time">发布时间：{{ dayjs.unix(props.postDataItem.time).format("lll") }}</div>
     <PostItemFooter :post-item="postDataItem" @switch-show-comments="showComments = !showComments" />
-    <PostItemComments v-if="showComments" />
+    <PostItemComments :post-id="postDataItem.id" v-if="showComments" />
   </div>
 </template>
 

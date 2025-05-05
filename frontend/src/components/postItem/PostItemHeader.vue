@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PostDataItem } from '@/services/dto/postDto';
 import SimpleAvatar from '../SimpleAvatar.vue';
-import { getAvatarUrl } from '@/utils/avatarUtil';
+import { getAvatarUrlFromPost } from '@/utils/avatarUtil';
 
 const props = defineProps<{
   postItem: PostDataItem
@@ -10,7 +10,7 @@ const props = defineProps<{
 
 <template>
   <div class="header">
-    <SimpleAvatar :avatarUrl="getAvatarUrl(props.postItem)" />
+    <SimpleAvatar size="normal" :avatarUrl="getAvatarUrlFromPost(props.postItem)" />
     <div class="user-info">
       <span class="nickname">{{ props.postItem.nickname }}</span>
       <span class="userid">{{ "@" + props.postItem.username }}</span>

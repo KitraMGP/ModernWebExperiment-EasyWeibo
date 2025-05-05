@@ -141,7 +141,7 @@ function changePasswd() {
 <template>
   <TopBar :show-back-link="true" />
 
-  <SimpleAvatar class="avatar" :avatar-url="avatarUrl" :large-avatar="true" />
+  <SimpleAvatar size="large" class="avatar" :avatar-url="avatarUrl" :large-avatar="true" />
 
   <span class="big-text">个人信息</span>
   <div class="user-info-area">

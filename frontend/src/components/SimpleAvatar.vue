@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
+type Size = "small" | "normal" | "large"
+
+// 通过指定 Size 来设定头像的显示大小
 const props = defineProps<{
   avatarUrl: string,
-  largeAvatar?: boolean
+  size: Size
 }>()
 
 const avatarClass = computed(() => ({
-  normal: !props.largeAvatar,
-  large: props.largeAvatar
+  small: props.size == "small",
+  normal: props.size == "normal",
+  large: props.size == "large"
 }))
 
 </script>
@@ -24,6 +28,11 @@ const avatarClass = computed(() => ({
   border: 1px solid var(--el-border-color-darker);
   border-radius: 50%;
   overflow: hidden;
+}
+
+.small {
+  height: 2rem;
+  width: 2rem;
 }
 
 .normal {
