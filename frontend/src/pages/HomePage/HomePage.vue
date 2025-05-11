@@ -6,34 +6,47 @@ import { checkSuccessful, getErrorMsg, showFailMessage } from '@/services/api';
 import type { PostDataItem } from '@/services/dto/postDto';
 
 import { postList } from '@/services/postApi';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const posts = ref<PostDataItem[] | null>(null)
 // 用来指定是否还有帖子可以加载，用来决定“加载更多”按钮是否显示
 const noMorePosts = ref(false)
-// 决定“加载更多”按钮是否禁用
-const morePostsButtonDisabled = ref(false)
+// 加载状态
+const isLoading = ref(false)
+const isError = ref(false)
+// 决定“重试”按钮获取最新帖子还是获取更多帖子
+// 若为 true，则应调用 fetchMorePosts() 获取帖子
+const firstPostsFetched = computed(() => {
+  return !(posts.value === null || posts.value.length === 0)
+})
 
-// 从后端获取帖子列表
+// 从后端获取最新帖子
 function fetchPosts() {
+  isLoading.value = true
+  isError.value = false
   postList().then(resp => {
     if (!checkSuccessful(resp)) {
       showFailMessage("帖子加载失败", getErrorMsg(resp))
+      isError.value = true
       return
     }
     posts.value = resp.data.data.posts
-
-  }).catch(e => showFailMessage("帖子加载失败", e))
+  }).catch(e => {
+    showFailMessage("帖子加载失败", e)
+    isError.value = true
+  }).finally(() => isLoading.value = false)
 }
 
 // 获取更多帖子
 function fetchMorePosts() {
+  isLoading.value = true
+  isError.value = false
   if (!posts.value) return
   const lastIndex = posts.value[posts.value.length - 1].id
-  morePostsButtonDisabled.value = true
   postList(lastIndex).then(resp => {
     if (!checkSuccessful(resp)) {
       showFailMessage("帖子加载失败", getErrorMsg(resp))
+      isError.value = true
       return
     }
     if (resp.data.data.posts.length === 0) {
@@ -41,8 +54,12 @@ function fetchMorePosts() {
       return
     }
     posts.value = posts.value!.concat(resp.data.data.posts)
-
-  }).catch(e => showFailMessage("帖子加载失败", e)).finally(() => morePostsButtonDisabled.value = false)
+  }).catch(e => {
+    showFailMessage("帖子加载失败", e)
+    isError.value = true
+  }).finally(() => {
+    isLoading.value = false
+  })
 }
 
 // 从前端的帖子列表中删除帖子
@@ -89,6 +106,15 @@ function onUpdateCommentCount(postId: number, count: number) {
   }
 }
 
+// 加载失败的重试功能
+function retryFetchPosts() {
+  if (firstPostsFetched.value) {
+    fetchMorePosts()
+  } else {
+    fetchPosts()
+  }
+}
+
 fetchPosts()
 
 </script>
@@ -99,8 +125,11 @@ fetchPosts()
   <PostItem v-for="item in posts" :key="item.id" @delete-post="deletePostFromList" :post-data-item="item"
     class="margin-top" @delete-comment="onDeleteComment" @new-comment="onNewComment"
     @update-comment-count="onUpdateCommentCount" />
-  <el-button v-if="!noMorePosts" type="primary" @click="fetchMorePosts()" :disabled="morePostsButtonDisabled"
+  <el-button v-if="!noMorePosts && !isLoading && firstPostsFetched && !isError" type="primary" @click="fetchMorePosts()"
     class="margin-top">加载更多</el-button>
+  <span v-if="isLoading" class="margin-top">加载中…</span>
+  <span v-if="isError" class="margin-top">加载失败，<el-link href="javascript:void(0)"
+      @click="retryFetchPosts()">点击重试</el-link></span>
   <span v-if="noMorePosts" class="margin-top no-more-posts-tip">我也是有底线的</span>
 </template>
 
