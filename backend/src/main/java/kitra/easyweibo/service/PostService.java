@@ -146,7 +146,7 @@ public class PostService {
      * 删除帖子
      */
     public void deletePost(int userId, int postId) {
-        UserEntity userEntity = userDao.getUserById(userId);
+        UserEntity userEntity = userDao.getUserById(userId); // 发出删帖请求的用户
         PostEntity postEntity = postDao.getPostById(postId);
         if (userEntity == null) {
             throw new UserNotFoundException();
@@ -154,9 +154,12 @@ public class PostService {
         if (postEntity == null) {
             throw new PostNotFoundException();
         }
-        // 注意：若帖子的user为null，这里也会提示权限不足
-        if (postEntity.getUser() == null || userId != postEntity.getUser().getId()) {
-            throw new PermissionDeniedException();
+        // 若为管理员，则可以直接删除帖子
+        if (!userEntity.isAdmin()) {
+            // 注意：若帖子的user为null，这里也会提示权限不足
+            if (postEntity.getUser() == null || userId != postEntity.getUser().getId()) {
+                throw new PermissionDeniedException();
+            }
         }
         // 删除帖子的所有图片
         imageService.setPostImage(postId, new String[0]);
@@ -225,30 +228,33 @@ public class PostService {
         if (commentEntity == null) {
             throw new CommentNotFoundException();
         }
-        // 可以删除自己的评论，或者自己发布的帖子的评论
-        // 发送评论的用户已注销（也说明不是自己发的评论）
-        if (commentEntity.getUser() == null) {
-            // 发送帖子的账户已注销
-            if (commentEntity.getPost().getUser() == null) {
-                throw new PermissionDeniedException();
-            }
-            // 不是自己发送的帖子
-            if (commentEntity.getPost().getUser().getId() != userEntity.getId()) {
-                throw new PermissionDeniedException();
-            }
-        } else {
-            // 发送评论的用户存在
-            // 发送帖子的账户未注销
-            if (commentEntity.getPost().getUser() != null) {
-                // 不是自己发送的评论，也不是自己发送的帖子的评论
-                if (commentEntity.getUser().getId() != userEntity.getId() && commentEntity.getPost().getUser().getId() != userEntity.getId()) {
+        // 管理员可以无视权限删除评论
+        if (!userEntity.isAdmin()) {
+            // 可以删除自己的评论，或者自己发布的帖子的评论
+            // 发送评论的用户已注销（也说明不是自己发的评论）
+            if (commentEntity.getUser() == null) {
+                // 发送帖子的账户已注销
+                if (commentEntity.getPost().getUser() == null) {
+                    throw new PermissionDeniedException();
+                }
+                // 不是自己发送的帖子
+                if (commentEntity.getPost().getUser().getId() != userEntity.getId()) {
                     throw new PermissionDeniedException();
                 }
             } else {
-                // 发送帖子的账户已注销
-                // 不是自己发送的评论
-                if (commentEntity.getUser().getId() != userEntity.getId()) {
-                    throw new PermissionDeniedException();
+                // 发送评论的用户存在
+                // 发送帖子的账户未注销
+                if (commentEntity.getPost().getUser() != null) {
+                    // 不是自己发送的评论，也不是自己发送的帖子的评论
+                    if (commentEntity.getUser().getId() != userEntity.getId() && commentEntity.getPost().getUser().getId() != userEntity.getId()) {
+                        throw new PermissionDeniedException();
+                    }
+                } else {
+                    // 发送帖子的账户已注销
+                    // 不是自己发送的评论
+                    if (commentEntity.getUser().getId() != userEntity.getId()) {
+                        throw new PermissionDeniedException();
+                    }
                 }
             }
         }

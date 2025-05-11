@@ -35,7 +35,10 @@ function doLogout() {
 
 <template>
   <div class="topbar">
-    <h1 class="topbar-title" @click="router.push('/')">EasyWeibo</h1>
+    <h1 class="topbar-title" @click="router.push('/')">
+      EasyWeibo
+      <span v-if="isUserLoggedIn && userData?.role === 'admin'">(管理员)</span>
+    </h1>
     <span class="flex-center" v-if="isUserLoggedIn">用户名：{{ userData?.username }}，昵称：{{ userData?.nickname
       }}</span>
     <!-- 若 showBackToMainPage 未定义，则默认为 false -->

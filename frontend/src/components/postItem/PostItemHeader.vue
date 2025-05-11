@@ -12,7 +12,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(["delete-post"])
 // 用来判断用户已登录，且帖子是自己发表的
-const showDeleteButton = computed(() => isLogin() && getLoginUser().userId === props.postItem.userId)
+const showDeleteButton = computed(() => isLogin() && (getLoginUser().role === 'admin' || getLoginUser().userId === props.postItem.userId))
 // 用于控制确认删除帖子对话框的显示
 const showDeleteDialog = ref(false)
 

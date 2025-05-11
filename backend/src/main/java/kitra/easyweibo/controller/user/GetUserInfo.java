@@ -32,6 +32,6 @@ public class GetUserInfo {
         } else {
             userEntity = userService.getUserInfo(user);
         }
-        return ApiUtil.successfulResponse(new GetUserInfoResponse(userEntity.getId(), userEntity.getUsername(), userEntity.getNickname(), userEntity.getDescription(), userEntity.hasAvatar()));
+        return ApiUtil.successfulResponse(new GetUserInfoResponse(userEntity.getId(), userEntity.getUsername(), userEntity.getNickname(), userEntity.getDescription(), userEntity.hasAvatar(), userEntity.isAdmin() ? "admin" : "user"));
     }
 }

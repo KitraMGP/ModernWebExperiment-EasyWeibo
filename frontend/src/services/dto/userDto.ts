@@ -26,4 +26,5 @@ export interface GetUserInfoResponse {
   nickname: string
   description: string
   hasAvatar: boolean
+  role: string
 }

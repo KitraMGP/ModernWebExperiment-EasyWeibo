@@ -14,7 +14,7 @@ const props = defineProps<{
 const emit = defineEmits(["delete-comment"])
 // 控制是否显示删除评论按钮
 // 显示条件：用户已登录，且是自己的评论；用户已登录，且是自己的帖子下的评论
-const showDeleteButton = computed(() => isLogin() && (getLoginUser().userId === props.comment.userId || getLoginUser().userId === props.postAuthorId))
+const showDeleteButton = computed(() => isLogin() && (getLoginUser().role === 'admin' || getLoginUser().userId === props.comment.userId || getLoginUser().userId === props.postAuthorId))
 // 控制是否显示确认删除对话框
 const showDeleteDialog = ref(false)
 // 删除评论

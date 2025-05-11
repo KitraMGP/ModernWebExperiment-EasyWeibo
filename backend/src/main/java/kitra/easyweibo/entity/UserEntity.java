@@ -11,6 +11,8 @@ public class UserEntity {
     private boolean hasAvatar;
     // 实际上是加密后的密码字符串
     private String password;
+    // 用户权限，有 admin 和 user 两种。用 isAdmin() 方法来判断用户权限
+    private String role;
 
     public int getId() {
         return id;
@@ -58,5 +60,21 @@ public class UserEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    /**
+     * 用于判断该用户是否为管理员用户。不要使用 getRole() 手动判断，应该使用此方法。
+     * @return 若为管理员，则返回 true
+     */
+    public boolean isAdmin() {
+        return role.equals("admin");
     }
 }
