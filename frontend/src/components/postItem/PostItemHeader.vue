@@ -6,6 +6,7 @@ import { computed, ref } from 'vue';
 import { getLoginUser, isLogin } from '@/utils/isLogin';
 import { deletePost } from '@/services/postApi';
 import { checkSuccessful, getErrorMsg, showFailMessage, showSuccessfulMessage } from '@/services/api';
+import router from '@/router';
 
 const props = defineProps<{
   postItem: PostDataItem
@@ -32,12 +33,21 @@ function doDeletePost() {
     showFailMessage("删除失败", e)
   })
 }
+
+// 处理用户点击帖子头像的行为。若用户存在，打开用户详情页面；否则不进行任何操作
+function onAvatarClick() {
+  if (props.postItem.userId !== null) {
+    router.push('/user/' + props.postItem.username)
+  }
+}
 </script>
 
 <template>
   <div class="header">
     <div class="user-info">
-      <SimpleAvatar size="normal" :avatarUrl="getAvatarUrlFromPost(props.postItem)" />
+      <div @click="onAvatarClick()" class="avatar" title="点击查看个人信息">
+        <SimpleAvatar size="normal" :avatarUrl="getAvatarUrlFromPost(props.postItem)" />
+      </div>
       <div class="user-info-text">
         <span class="nickname">{{ props.postItem.nickname }}</span>
         <span class="userid">{{ "@" + props.postItem.username }}</span>
@@ -74,6 +84,10 @@ function doDeletePost() {
   display: flex;
   flex-direction: row;
   column-gap: 1rem;
+}
+
+.avatar {
+  cursor: pointer;
 }
 
 .user-info-text {

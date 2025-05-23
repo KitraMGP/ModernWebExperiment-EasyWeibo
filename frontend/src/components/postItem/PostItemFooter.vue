@@ -37,11 +37,11 @@ function changeLike(like: boolean) {
 <template>
   <div class="post-footer">
     <div class="post-footer-item">
-      <i v-if="isLiked" @click="changeLike(false)" class="iconfont icon-like-fill"></i>
-      <i v-if="!isLiked" @click="changeLike(true)" class="iconfont icon-like"></i>
+      <i v-if="isLiked" @click="changeLike(false)" title="取消点赞" class="iconfont icon-like-fill"></i>
+      <i v-if="!isLiked" @click="changeLike(true)" title="点赞" class="iconfont icon-like"></i>
       {{ likesCount }}
     </div>
-    <div class="post-footer-item"><i class="iconfont icon-comment" @click="emit('switchShowComments')"></i>{{
+    <div class="post-footer-item"><i class="iconfont icon-comment" title="评论" @click="emit('switchShowComments')"></i>{{
       props.postItem.comments }}</div>
   </div>
 </template>

@@ -40,7 +40,7 @@ function doLogout() {
       <span v-if="isUserLoggedIn && userData?.role === 'admin'">(管理员)</span>
     </h1>
     <span class="flex-center" v-if="isUserLoggedIn">用户名：{{ userData?.username }}，昵称：{{ userData?.nickname
-      }}</span>
+    }}</span>
     <!-- 若 showBackToMainPage 未定义，则默认为 false -->
     <el-link v-if="props.showBackLink ? props.showBackLink : false" :underline="false" class="topbar-item"
       @click="router.back()">返回上一页</el-link>
@@ -49,7 +49,7 @@ function doLogout() {
     <el-link v-if="!isUserLoggedIn" :underline="false" class="topbar-item" @click="router.push('/login')">登录</el-link>
     <el-link :underline="false" class="topbar-item" @click="toggleDark()">主题切换</el-link>
     <el-link v-if="isUserLoggedIn" :underline="false" class="topbar-item"
-      @click="router.push('/userInfo')">个人中心</el-link>
+      @click="router.push('/editUserInfo')">个人中心</el-link>
     <el-link v-if="isUserLoggedIn" :underline="false" class="topbar-item" @click="doLogout()">退出登录</el-link>
   </div>
 </template>

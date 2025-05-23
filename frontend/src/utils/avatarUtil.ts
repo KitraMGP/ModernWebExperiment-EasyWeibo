@@ -35,3 +35,7 @@ export function getLoginUserAvatarUrl(): string {
     return 'http://127.0.0.1:9000/avatars/' + userDataStore.value.userId + '_avatar.jpg'
   }
 }
+
+export function getUserAvatarUrl(userId: number): string {
+  return 'http://127.0.0.1:9000/avatars/' + userId + '_avatar.jpg'
+}

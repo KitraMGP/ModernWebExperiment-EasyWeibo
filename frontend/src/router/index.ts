@@ -1,6 +1,7 @@
 import HomePage from '@/pages/HomePage/HomePage.vue'
 import LoginPage from '@/pages/LoginPage/LoginPage.vue'
 import RegisterPage from '@/pages/LoginPage/RegisterPage.vue'
+import UserInfoEditPage from '@/pages/UserInfoPage/UserInfoEditPage.vue'
 import UserInfoPage from '@/pages/UserInfoPage/UserInfoPage.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -20,7 +21,11 @@ const router = createRouter({
       component: LoginPage,
     },
     {
-      path: '/userInfo',
+      path: '/editUserInfo',
+      component: UserInfoEditPage,
+    },
+    {
+      path: '/user/:user',
       component: UserInfoPage,
     },
   ],

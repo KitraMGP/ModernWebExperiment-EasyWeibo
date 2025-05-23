@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import router from '@/router';
 import { checkSuccessful, getErrorMsg, showFailMessage, showSuccessfulMessage } from '@/services/api';
 import type { CommentDataItem } from '@/services/dto/postDto';
 import { deleteComment } from '@/services/postApi';
@@ -33,13 +34,23 @@ function doDeleteComment() {
     showFailMessage("删除失败", e)
   })
 }
+
+// 处理用户点击头像的行为。若用户存在，打开用户详情页面；否则不进行任何操作
+function onAvatarClick() {
+  if (props.comment.userId !== null) {
+    router.push('/user/' + props.comment.username)
+  }
+}
 </script>
 
 <template>
   <div class="comment-item">
     <div class="comment-header">
       <div class="user-info">
-        <SimpleAvatar size="small" :avatarUrl="getAvatarUrlFromComment(props.comment)" />
+        <div class="avatar" title="点击查看个人信息" @click="onAvatarClick()">
+          <SimpleAvatar size="small" :avatarUrl="getAvatarUrlFromComment(props.comment)" />
+        </div>
+
         <div class="user-info-text">
           <span class="nickname">{{ props.comment.nickname }}</span>
           <span class="userid">{{ "@" + props.comment.username }}</span>
@@ -85,6 +96,10 @@ function doDeleteComment() {
   flex-direction: row;
   column-gap: 1rem;
   align-items: center;
+}
+
+.avatar {
+  cursor: pointer;
 }
 
 .user-info-text {
