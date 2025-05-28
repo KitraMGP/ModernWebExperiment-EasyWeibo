@@ -1,11 +1,41 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/16JY11ZU)
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=18741859&assignment_repo_type=AssignmentRepo)
+
 简易社交分享平台项目
 
 实现的功能：
 基础级：实现文字分享、浏览功能
 标准级：增加图片上传、评论功能
 挑战级：实现点赞、权限控制等高级功能
+
+## 如何运行（Docker）
+
+1. 确保你的 Linux 系统里安装好了 Docker 和 Docker Compose。
+1. 切换到生产环境配置文件：找到`./backend/src/main/resources/application.yml`文件，将`active: dev`更改为`active: prod`。
+2. 在仓库根目录运行`docker compose up`命令，等待容器构建完后，系统会开始运行。使用浏览器访问本机的 9000 端口即可进入系统，使用数据库客户端访问本机的 9001 端口可以访问系统的 MySQL 数据库，访问本机的 9002 端口可以访问系统的 Redis 数据库。
+
+   > 注意：构建 backend 镜像的时候，可能会在运行 `gradle build --no-daemon` 这个步骤的时候卡住很久，这是 Gradle 正在下载依赖项，请耐心等待。
+
+## 如何开发和运行（Windows/Linux）
+
+### 开发
+
+1. 确保你已经安装好 JDK 17。
+2. 在 Visual Studio Code 中打开 `frontend` 文件夹来开发前端，执行 `npm install` 命令安装依赖，并根据 VSCode 的提示打开父目录的 git 仓库。
+3. 在 IntelliJ IDEA 中打开 `backend` 文件夹来开发后端。
+
+### 运行准备工作
+
+1. 安装 MySQL（推荐安装 8.4 版本），创建数据库 `easyweibo`，并执行 `mysql-init` 目录中的 SQL 文件初始化数据库结构。
+2. 安装 Redis
+3. 编辑 `application-dev.yml`，指定数据库的地址、密码等参数。
+
+### 运行
+
+1. 确保你已经下载了 Caddy 并设置好了环境变量。
+2. 启动后端项目。
+3. 运行根目录的 `start_caddy_dev.bat`（Linux 用户可输入 `caddy run` 命令手动运行 Caddy）。
+4. 在前端项目中执行 `npm run dev` 命令启动前端项目。
 
 ## 第一阶段：Web三件套基础（HTML/CSS/JavaScript）
 
