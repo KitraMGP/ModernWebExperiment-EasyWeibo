@@ -1,6 +1,10 @@
 # 用于开发环境的 Caddyfile
 # 主要用于提供后端上传的图片静态资源，还用于后端反向代理
 # 在此目录运行 start_caddy_dev.bat 即可启动
+{
+	admin :2020
+}
+
 :9000 {
     # 反向代理到 Spring Boot 后端
     handle_path /api/* {

@@ -1,18 +1,9 @@
 <script setup lang="ts">
 import router from '@/router';
-import { ref } from 'vue';
-
-const visible = ref(false)
-// 父组件在此事件处理器中对组件进行卸载和销毁
-const emit = defineEmits(["closed"])
-
-const showDialog = () => {
-  visible.value = true
-}
+import { useRequireLoginDialogStore } from '@/stores/userData';
 
 const hideDialog = () => {
-  visible.value = false
-  emit("closed")
+  dialogStore.set(false)
 }
 
 function login() {
@@ -20,11 +11,11 @@ function login() {
   router.push("/login")
 }
 
-defineExpose({ showDialog, hideDialog })
+const dialogStore = useRequireLoginDialogStore()
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="提示" :align-center="true">
+  <el-dialog v-model="dialogStore.requireLoginDialog" title="提示" :align-center="true" @close="hideDialog()">
     <span>您需要登录才能使用相关功能，是否登录？</span>
     <template #footer>
       <div class="dialog-footer">

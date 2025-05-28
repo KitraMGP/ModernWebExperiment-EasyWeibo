@@ -15,3 +15,13 @@ export const useUserDataStore = defineStore('userData', () => {
 
   return { userData: userData, value, set, clear }
 })
+
+// 控制是否显示登录提示对话框
+export const useRequireLoginDialogStore = defineStore('requireLoginDialog', () => {
+  const store = ref(false)
+  const value = computed(() => store.value)
+  function set(value: boolean) {
+    store.value = value
+  }
+  return { requireLoginDialog: store, value, set }
+})

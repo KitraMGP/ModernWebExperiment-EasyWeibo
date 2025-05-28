@@ -1,0 +1,30 @@
+# 用于在非 Docker 镜像的位置测试生产环境
+{
+	admin :2020
+}
+
+:9000 {
+	# 反向代理到 Spring Boot 后端
+	handle_path /api/* {
+		reverse_proxy http://127.0.0.1:8081
+        encode gzip
+	}
+	# 头像目录
+	handle_path /avatars/* {
+		root * /backend/avatarUploads
+		file_server
+        encode gzip
+	}
+	# 帖子图片目录
+	#handle_path /postImages/* {
+	#	root * ./backend/postImageUploads
+	#	file_server
+    #    encode gzip
+	#}
+
+	handle {
+		root * ./frontend/dist
+		file_server
+		encode gzip
+	}
+}
