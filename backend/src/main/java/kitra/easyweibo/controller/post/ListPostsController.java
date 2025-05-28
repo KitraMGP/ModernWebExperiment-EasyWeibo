@@ -41,7 +41,9 @@ public class ListPostsController {
             // 获取lastId之前更早的posts
             postItems = postService.getMorePosts(lastId, GET_POSTS_LIMIT, userId);
         }
+        // 判断是否没有更多帖子了
+        boolean noMorePosts = postItems.size() < GET_POSTS_LIMIT;
         // 组装最终数据
-        return ApiUtil.successfulResponse(new GetPostsResponse(postItems));
+        return ApiUtil.successfulResponse(new GetPostsResponse(postItems, noMorePosts));
     }
 }

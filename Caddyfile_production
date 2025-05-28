@@ -13,11 +13,11 @@
         encode gzip
 	}
 	# 帖子图片目录
-	handle_path /postImages/* {
-		root * ./backend/postImageUploads
-		file_server
-        encode gzip
-	}
+	#handle_path /postImages/* {
+	#	root * ./backend/postImageUploads
+	#	file_server
+    #    encode gzip
+	#}
 
 	handle {
 		root * /usr/share/caddy
