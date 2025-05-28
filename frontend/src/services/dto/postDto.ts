@@ -14,6 +14,7 @@ export interface PostDataItem {
 
 export interface ListPostsResponse {
   posts: PostDataItem[]
+  noMorePosts: boolean
 }
 
 export interface CommentDataItem {

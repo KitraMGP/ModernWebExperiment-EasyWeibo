@@ -6,7 +6,7 @@ import { checkSuccessful, getErrorMsg, showFailMessage } from '@/services/api';
 import type { PostDataItem } from '@/services/dto/postDto';
 
 import { postList } from '@/services/postApi';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 const posts = ref<PostDataItem[] | null>(null)
 // 用来指定是否还有帖子可以加载，用来决定“加载更多”按钮是否显示
@@ -16,10 +16,8 @@ const isLoading = ref(false)
 const isError = ref(false)
 // 决定“重试”按钮获取最新帖子还是获取更多帖子
 // 若为 true，则应调用 fetchMorePosts() 获取帖子
-const firstPostsFetched = computed(() => {
-  return !(posts.value === null || posts.value.length === 0)
-})
-
+const firstPostsFetched = ref(false)
+const lastIndex = ref(-1)
 // 从后端获取最新帖子
 function fetchPosts() {
   isLoading.value = true
@@ -30,7 +28,15 @@ function fetchPosts() {
       isError.value = true
       return
     }
+    firstPostsFetched.value = true
     posts.value = resp.data.data.posts
+    // 若没有获取到任何帖子，不要再读取列表元素的id属性了
+    if (posts.value.length !== 0) {
+      lastIndex.value = posts.value[posts.value.length - 1].id
+    } else {
+      lastIndex.value = -1
+    }
+    noMorePosts.value = resp.data.data.noMorePosts
   }).catch(e => {
     showFailMessage("帖子加载失败", e)
     isError.value = true
@@ -42,18 +48,21 @@ function fetchMorePosts() {
   isLoading.value = true
   isError.value = false
   if (!posts.value) return
-  const lastIndex = posts.value[posts.value.length - 1].id
-  postList(lastIndex).then(resp => {
+  postList(lastIndex.value).then(resp => {
     if (!checkSuccessful(resp)) {
       showFailMessage("帖子加载失败", getErrorMsg(resp))
       isError.value = true
       return
     }
-    if (resp.data.data.posts.length === 0) {
-      noMorePosts.value = true
-      return
-    }
+    noMorePosts.value = resp.data.data.noMorePosts
     posts.value = posts.value!.concat(resp.data.data.posts)
+    // 若帖子列表为空，不要读取列表元素的id
+    if (posts.value.length !== 0) {
+      lastIndex.value = posts.value[posts.value.length - 1].id
+    } else {
+      // 这是一种异常情况
+      showFailMessage("发生错误，请刷新页面重试", new Error())
+    }
   }).catch(e => {
     showFailMessage("帖子加载失败", e)
     isError.value = true

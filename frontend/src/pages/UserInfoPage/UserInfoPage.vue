@@ -51,7 +51,11 @@ function fetchUserInfo(user: string | string[]) {
     // 请求成功
     userData.value = resp.data.data
     // 更新头像链接
-    avatarUrl.value = getUserAvatarUrl(resp.data.data.userId)
+    if (userData.value.hasAvatar) {
+      avatarUrl.value = getUserAvatarUrl(resp.data.data.userId)
+    } else {
+      avatarUrl.value = defaultAvatar
+    }
   }).catch(() => {
     isError.value = true
   }).finally(() => {
@@ -75,16 +79,16 @@ fetchUserInfo(route.params.user)
       <table border="0">
         <tbody>
           <tr>
-            <td>用户名</td>
+            <td class="label">用户名：</td>
             <td>{{ userData?.username }}</td>
           </tr>
           <tr>
-            <td>昵称</td>
+            <td class="label">昵称：</td>
             <td>{{ userData?.nickname }}</td>
           </tr>
           <tr>
-            <td>个人描述</td>
-            <td>{{ userData?.description }}</td>
+            <td class="label">个人描述：</td>
+            <td>{{ userData?.description.length === 0 ? "这个人很懒，没有写个人描述" : userData?.description }}</td>
           </tr>
         </tbody>
       </table>
@@ -109,5 +113,9 @@ fetchUserInfo(route.params.user)
 
 td {
   padding: 0.5rem 1rem;
+}
+
+.label {
+  text-align: right;
 }
 </style>
