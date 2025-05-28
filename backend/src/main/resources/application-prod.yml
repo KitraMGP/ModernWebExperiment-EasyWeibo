@@ -1,3 +1,7 @@
+#
+# 这是 Docker Compose 中使用的生产环境配置文件
+# MySQL、Redis 的 IP 地址均为容器名
+#
 spring:
   application:
     name: easyweibo
@@ -6,7 +10,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   datasource:
-    url: jdbc:mysql://localhost:3306/easyweibo?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://mysql:3306/easyweibo?useUnicode=true&characterEncoding=utf-8
     username: root
     password: 123456
   data:
@@ -15,7 +19,7 @@ spring:
       # Redis数据库索引（默认为0）
       database: 1
       # Redis服务器地址
-      host: 127.0.0.1
+      host: redis
       # Redis服务器连接端口
       port: 6379
       # Redis服务器连接密码（默认为空）

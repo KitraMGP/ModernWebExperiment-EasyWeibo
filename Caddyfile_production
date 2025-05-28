@@ -1,0 +1,27 @@
+# 用于生产环境的 Caddyfile
+# 主要用于提供后端上传的图片静态资源，提供前端静态资源，还用于后端反向代理
+:9000 {
+	# 反向代理到 Spring Boot 后端
+	handle_path /api/* {
+		reverse_proxy http://backend:8081
+        encode gzip
+	}
+	# 头像目录
+	handle_path /avatars/* {
+		root * /avatarUploads
+		file_server
+        encode gzip
+	}
+	# 帖子图片目录
+	handle_path /postImages/* {
+		root * ./backend/postImageUploads
+		file_server
+        encode gzip
+	}
+
+	handle {
+		root * /usr/share/caddy
+		file_server
+		encode gzip
+	}
+}

@@ -1,4 +1,39 @@
 services:
+  mysql:
+    image: mysql:8.4
+    container_name: mysql
+    networks:
+      - app-network
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=easyweibo
+    volumes:
+      - easyweibo-mysql-data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d  # 存放数据库初始化脚本
+    ports:
+      - "9001:3306" # 允许使用数据库客户端从外部访问
+  redis:
+    image: redis:8.0.1
+    container_name: redis
+    networks:
+      - app-network
+    # 注意：要在生产环境中使用，请启用 Redis 密码，并生成一个足够安全的随机密码
+    # command: redis-server --requirepass your_redis_password
+    command: redis-server
+    volumes:
+      - easyweibo-redis-data:/data
+    ports:
+      - "9002:6379"
+  backend:
+    build: 
+      context: ./backend
+    networks:
+      - app-network
+    volumes:
+      - easyweibo-avatars:/avatarUploads
+    depends_on:
+      - mysql
+      - redis
   frontend:
     build:
       context: .
@@ -7,7 +42,16 @@ services:
       - "9000:9000"
     networks:
       - app-network
-    
+    volumes:
+      - easyweibo-avatars:/avatarUploads
+    depends_on:
+      - backend
+
+volumes:
+  easyweibo-mysql-data:
+  easyweibo-redis-data:
+  easyweibo-avatars:
+
 networks:
   app-network:
     driver: bridge
