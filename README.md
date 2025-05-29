@@ -8,13 +8,15 @@
 标准级：增加图片上传、评论功能
 挑战级：实现点赞、权限控制等高级功能
 
-## 如何运行（Docker）
+## 如何一键部署运行（Docker）
 
 1. 确保你的 Linux 系统里安装好了 Docker 和 Docker Compose。
 1. 切换到生产环境配置文件：找到`./backend/src/main/resources/application.yml`文件，将`active: dev`更改为`active: prod`。
 2. 在仓库根目录运行`docker compose up`命令，等待容器构建完后，系统会开始运行。使用浏览器访问本机的 9000 端口即可进入系统，使用数据库客户端访问本机的 9001 端口可以访问系统的 MySQL 数据库，访问本机的 9002 端口可以访问系统的 Redis 数据库。
 
    > 注意：构建 backend 镜像的时候，可能会在运行 `gradle build --no-daemon` 这个步骤的时候卡住很久，这是 Gradle 正在下载依赖项，请耐心等待。
+
+   > ⚠️警告：若要将服务发布至公网，为了您的系统安全，请勿暴露 9001 和 9002 端口，以避免网络攻击风险！若有在公网访问数据库的需求，请务必为 MySQL 和 Redis 设置高强度随机密码！
 
 ## 如何开发和运行（Windows/Linux）
 
